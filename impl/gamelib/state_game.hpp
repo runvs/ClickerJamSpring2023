@@ -1,6 +1,9 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
+#include "animation.hpp"
+#include "button.hpp"
+#include "text.hpp"
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
 #include <memory>
@@ -24,6 +27,12 @@ private:
     std::shared_ptr<jt::Vignette> m_vignette;
     std::shared_ptr<Hud> m_hud;
     std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
+
+    std::shared_ptr<jt::Animation> m_animation;
+
+    std::shared_ptr<jt::Shape> m_menuBackground;
+    std::shared_ptr<jt::Button> m_button1;
+    std::shared_ptr<jt::Text> m_button1Text;
 
     bool m_running { true };
     bool m_hasEnded { false };
