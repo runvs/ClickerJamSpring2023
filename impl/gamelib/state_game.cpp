@@ -1,4 +1,5 @@
 ﻿#include "state_game.hpp"
+#include "trollface.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <color/color.hpp>
 #include <game_interface.hpp>
@@ -23,10 +24,6 @@ void StateGame::onCreate()
     m_background->setIgnoreCamMovement(true);
     m_background->update(0.0f);
 
-    m_troll_face = std::make_shared<jt::Sprite>("assets/troll_face_small.png", textureManager());
-    m_troll_face->setOrigin(jt::OriginMode::CENTER);
-    m_troll_face->setPosition(GP::GetScreenSize() * 0.5f);
-
     createPlayer();
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
@@ -40,7 +37,7 @@ void StateGame::onCreate()
 
 void StateGame::onEnter() { }
 
-void StateGame::createPlayer() { }
+void StateGame::createPlayer() { add(std::make_shared<TrollFace>()); }
 
 void StateGame::onUpdate(float const elapsed)
 {
@@ -63,23 +60,12 @@ void StateGame::onUpdate(float const elapsed)
 
     m_background->update(elapsed);
     m_vignette->update(elapsed);
-
-    float rotation_rate = 0.0f;
-    if (getGame()->input().keyboard()->pressed(jt::KeyCode::Q)) {
-        rotation_rate = +15.0f;
-    } else if (getGame()->input().keyboard()->pressed(jt::KeyCode::E)) {
-        rotation_rate = -15.0f;
-    }
-
-    m_troll_face->setRotation(m_troll_face->getRotation() + (rotation_rate * elapsed));
-    m_troll_face->update(elapsed);
 }
 
 void StateGame::onDraw() const
 {
     m_background->draw(renderTarget());
     drawObjects();
-    m_troll_face->draw(renderTarget());
     m_vignette->draw();
     m_hud->draw();
 }
