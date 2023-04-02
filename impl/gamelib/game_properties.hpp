@@ -33,7 +33,11 @@ public:
 
     static int PhysicVelocityIterations();
     static int PhysicPositionIterations();
-    static jt::Vector2f PlayerSize();
+
+    static jt::Vector2u HudButtonSize();
+    static jt::Vector2f HudMenuOffset();
+    static jt::Vector2f HudMenuMargin();
+
 };
 
 #endif

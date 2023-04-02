@@ -4,14 +4,12 @@
 
 void PurchaseButton::doCreate()
 {
-    // TODO move font size and ratios to GP
-    m_button = std::make_shared<jt::Button>(jt::Vector2u { 90, 20 }, textureManager());
+    m_button = std::make_shared<jt::Button>(GP::HudButtonSize(), textureManager());
     m_buttonText = jt::dh::createText(renderTarget(), "    Miner", 16);
     m_buttonText->setTextAlign(jt::Text::TextAlign::LEFT);
     m_buttonText->setOffset(jt::Vector2f { 20, 0 });
     m_button->setDrawable(m_buttonText);
-    auto const menuMargin = jt::Vector2f { 5.0f, 5.0f };
-    m_button->setPosition(jt::Vector2f { GP::GetScreenSize().x / 4 * 3, 0 } + menuMargin);
+    m_button->setPosition( GP::HudMenuOffset() + GP::HudMenuMargin());
 
     m_button->setGameInstance(getGame());
     m_button->create();
