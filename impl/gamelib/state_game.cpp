@@ -27,19 +27,18 @@ void StateGame::onCreate()
     createPlayer();
 
     // TODO extract into separate class
-    m_button1 = std::make_shared<jt::Button>(jt::Vector2u { 90, 20 }, textureManager());
-    m_button1Text = jt::dh::createText(renderTarget(), " Miner", 16);
-    m_button1Text->setTextAlign(jt::Text::TextAlign::LEFT);
-    m_button1Text->setOffset(jt::Vector2f { 20, 0 });
-    m_button1->setDrawable(m_button1Text);
-    auto const menuMargin = jt::Vector2f { 5.0f, 5.0f };
-    m_button1->setPosition(jt::Vector2f { GP::GetScreenSize().x / 4 * 3, 0 } + menuMargin);
-    add(m_button1);
 
     m_menuBackground = std::make_shared<jt::Shape>();
     m_menuBackground->makeRect(
         jt::Vector2f { GP::GetScreenSize().x / 4.0f, GP::GetScreenSize().y }, textureManager());
     m_menuBackground->setPosition(jt::Vector2f { GP::GetScreenSize().x / 4.0f * 3, 0.0f });
+
+    m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
+    add(m_purchaseButtons);
+
+    auto button = std::make_shared<PurchaseButton>();
+    m_purchaseButtons->push_back(button);
+    add(button);
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
@@ -52,12 +51,7 @@ void StateGame::onCreate()
 
 void StateGame::onEnter() { }
 
-void StateGame::createPlayer()
-{
-    m_animation = std::make_shared<jt::Animation>();
-    m_animation->loadFromJson("assets/human/MiniArcherMan.json", textureManager());
-    m_animation->play("idle");
-}
+void StateGame::createPlayer() { }
 
 void StateGame::onUpdate(float const elapsed)
 {
@@ -77,7 +71,6 @@ void StateGame::onUpdate(float const elapsed)
             endGame();
         }
         m_menuBackground->update(elapsed);
-        m_animation->update(elapsed);
     }
 
     m_background->update(elapsed);
@@ -90,7 +83,6 @@ void StateGame::onDraw() const
 
     m_menuBackground->draw(renderTarget());
     drawObjects();
-    m_animation->draw(renderTarget());
     m_vignette->draw();
     m_hud->draw();
 }
