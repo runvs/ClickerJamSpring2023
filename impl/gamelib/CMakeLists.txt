@@ -6,6 +6,7 @@ if (JT_ENABLE_WEB)
 endif ()
 
 target_link_libraries(GameLib PUBLIC JamTemplateLib)
+target_link_libraries(GameLib PUBLIC ArbitraryPrecisionInteger)
 target_include_directories(GameLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if (MSVC)
     target_compile_options(GameLib PRIVATE "/W3")
