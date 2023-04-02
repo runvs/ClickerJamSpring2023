@@ -12,12 +12,15 @@ void TrollFace::doCreate()
 }
 void TrollFace::doUpdate(const float elapsed)
 {
-
     float rotation_rate = 0.0f;
     if (getGame()->input().keyboard()->pressed(jt::KeyCode::Q)) {
-        rotation_rate = +15.0f;
-    } else if (getGame()->input().keyboard()->pressed(jt::KeyCode::E)) {
-        rotation_rate = -15.0f;
+        rotation_rate += 30.0f;
+    }
+    if (getGame()->input().keyboard()->pressed(jt::KeyCode::E)) {
+        rotation_rate -= 30.0f;
+    }
+    if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+        rotation_rate *= 2;
     }
 
     m_troll_face->setRotation(m_troll_face->getRotation() + (rotation_rate * elapsed));
