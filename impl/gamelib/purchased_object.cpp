@@ -11,8 +11,8 @@ PurchasedObject::PurchasedObject(BankInterface& bank, PurchaseInfo const& info)
 void PurchasedObject::doCreate()
 {
     m_animation = std::make_shared<jt::Animation>();
-    m_animation->loadFromJson(m_info.animation_file, textureManager());
-    m_animation->play(m_info.animation_name_purchased);
+    m_animation->loadFromJson(m_info.animationFile, textureManager());
+    m_animation->play(m_info.animationNamePurchased);
 }
 void PurchasedObject::doUpdate(float const elapsed)
 {

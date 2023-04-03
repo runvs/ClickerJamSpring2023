@@ -14,8 +14,8 @@ class ScoreDisplay;
 class Hud : public jt::GameObject {
 public:
     std::shared_ptr<ObserverInterface<api::API>> getDepthScore() const;
-    std::shared_ptr<ObserverInterface<api::API>> getMoneyScore() const;
-    std::shared_ptr<ObserverInterface<api::API>> getMoneyPerSecond() const;
+    std::shared_ptr<ObserverInterface<api::API const&>> getMoneyScore() const;
+    std::shared_ptr<ObserverInterface<api::API const&>> getMoneyPerSecond() const;
 
 private:
     std::shared_ptr<DepthDisplay> m_depthDisplay;

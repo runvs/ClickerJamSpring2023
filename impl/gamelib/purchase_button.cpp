@@ -37,8 +37,8 @@ void PurchaseButton::doCreate()
     });
 
     m_buttonAnimation = std::make_shared<jt::Animation>();
-    m_buttonAnimation->loadFromJson(m_purchaseInfo.animation_file, textureManager());
-    m_buttonAnimation->play(m_purchaseInfo.animation_name_menu);
+    m_buttonAnimation->loadFromJson(m_purchaseInfo.animationFile, textureManager());
+    m_buttonAnimation->play(m_purchaseInfo.animationNameMenu);
 }
 
 void PurchaseButton::doUpdate(float const elapsed)

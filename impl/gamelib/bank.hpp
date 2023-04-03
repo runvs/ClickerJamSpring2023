@@ -12,7 +12,7 @@ public:
     void receiveMoney(api::API const& amount) override;
 
 private:
-    api::API m_money;
+    api::API m_money = api::from_uint64(10u);
 };
 
 #endif // CLICKERJAMSPRING2023_BANK_HPP

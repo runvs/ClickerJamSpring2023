@@ -6,8 +6,11 @@
 #include <hud/score_display.hpp>
 
 std::shared_ptr<ObserverInterface<api::API>> Hud::getDepthScore() const { return m_depthDisplay; }
-std::shared_ptr<ObserverInterface<api::API>> Hud::getMoneyScore() const { return m_moneyDisplay; }
-std::shared_ptr<ObserverInterface<api::API>> Hud::getMoneyPerSecond() const
+std::shared_ptr<ObserverInterface<api::API const&>> Hud::getMoneyScore() const
+{
+    return m_moneyDisplay;
+}
+std::shared_ptr<ObserverInterface<api::API const&>> Hud::getMoneyPerSecond() const
 {
     return m_moneyPerSecondDisplay;
 }

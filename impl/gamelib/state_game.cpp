@@ -37,22 +37,91 @@ void StateGame::onCreate()
     add(m_purchaseButtons);
 
     std::vector<PurchaseInfo> purchaseInfos;
-    purchaseInfos.push_back(
-        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/miner.json", "idle", "mine",
-            [this](api::API const& /*cost*/) {
-                m_purchasedObjects->addObject("Miner");
-                // TODO other effects
-                // Note: No need to remove money from bank, button already takes care of this
-            },
-            GP::PurchasedNumberOfMinersPerLine(), 1.5f, api::from_uint64(1u) });
-    purchaseInfos.push_back(PurchaseInfo { "Geologist", api::from_uint64(100u),
-        "assets/human/MiniArcherMan.json", "idle", "attack",
-        [this](api::API const& /*cost*/) {
+
+    {
+        PurchaseInfo miner;
+        miner.name = "Miner";
+
+        miner.animationFile = "assets/human/miner.json";
+        miner.animationNameMenu = "idle";
+        miner.animationNamePurchased = "mine";
+
+        miner.initialCost = api::from_uint64(10u);
+        miner.purchaseCallback = [this](api::API const& /*cost*/) {
+            m_purchasedObjects->addObject("Miner");
+            // TODO other effects
+            // Note: No need to remove money from bank, button already takes care of this
+        };
+
+        miner.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        miner.timerMax = 1.0f;
+        miner.income = api::from_uint64(1u);
+
+        purchaseInfos.push_back(miner);
+    }
+    {
+        PurchaseInfo geologist;
+        geologist.name = "Geologist";
+
+        geologist.animationFile = "assets/human/MiniArcherMan.json";
+        geologist.animationNameMenu = "idle";
+        geologist.animationNamePurchased = "attack";
+
+        geologist.initialCost = api::from_uint64(100u);
+        geologist.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Geologist");
             // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
-        },
-        25, 2.0f, api::from_uint64(15u) });
+        };
+
+        geologist.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        geologist.timerMax = 1.0f;
+        geologist.income = api::from_uint64(15u);
+
+        purchaseInfos.push_back(geologist);
+    }
+    {
+        PurchaseInfo driller;
+        driller.name = "Driller";
+
+        driller.animationFile = "assets/human/MiniArcherMan.json";
+        driller.animationNameMenu = "idle";
+        driller.animationNamePurchased = "attack";
+
+        driller.initialCost = api::from_uint64(1000u);
+        driller.purchaseCallback = [this](api::API const& /*cost*/) {
+            m_purchasedObjects->addObject("Driller");
+            // TODO other effects
+            // Note: No need to remove money from bank, button already takes care of this
+        };
+
+        driller.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        driller.timerMax = 1.0f;
+        driller.income = api::from_uint64(175u);
+
+        purchaseInfos.push_back(driller);
+    }
+    {
+        PurchaseInfo blastMaster;
+        blastMaster.name = "Blaster";
+
+        blastMaster.animationFile = "assets/human/MiniArcherMan.json";
+        blastMaster.animationNameMenu = "idle";
+        blastMaster.animationNamePurchased = "attack";
+
+        blastMaster.initialCost = api::from_uint64(10000u);
+        blastMaster.purchaseCallback = [this](api::API const& /*cost*/) {
+            m_purchasedObjects->addObject("Blaster");
+            // TODO other effects
+            // Note: No need to remove money from bank, button already takes care of this
+        };
+
+        blastMaster.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        blastMaster.timerMax = 1.0f;
+        blastMaster.income = api::from_uint64(2000u);
+
+        purchaseInfos.push_back(blastMaster);
+    }
 
     // automatically fill index member variable
     for (auto i = 0u; i != purchaseInfos.size(); ++i) {

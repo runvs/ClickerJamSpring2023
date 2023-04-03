@@ -6,11 +6,11 @@
 #include <hud/observer_interface.hpp>
 #include <text.hpp>
 
-class MoneyDisplay : public ObserverInterface<api::API> {
+class MoneyDisplay : public ObserverInterface<api::API const&> {
 public:
     explicit MoneyDisplay(
         jt::Text::Sptr text, std::string const& prefix = "", std::string const& postfix = "");
-    void notify(api::API value) override;
+    void notify(api::API const& value) override;
 
 private:
     jt::Text::Sptr const m_scoreText;
