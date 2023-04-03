@@ -36,7 +36,7 @@ void PurchasedObject::doDraw() const
         if (y % 2 == 1) {
             xOffset = 5.0f;
         }
-        m_animation->setPosition(jt::Vector2f { xOffset - 5, 5 + 60.0f * m_info.index }
+        m_animation->setPosition(jt::Vector2f { xOffset - 5, 40 + 60.0f * m_info.index }
             + jt::Vector2f { x * 10.0f, y * 8.0f });
         m_animation->update(0.0f);
         m_animation->draw(renderTarget());
@@ -51,6 +51,6 @@ void PurchasedObject::buyOne()
 
 api::API PurchasedObject::getInputPerMinute() const
 {
-    return m_info.income * api::from_uint64(m_numberOfObjects) * api::from_uint64(1000u * 60u)
+    return m_info.income * api::from_uint64(m_numberOfObjects) * api::from_uint64(1000u)
         / api::from_uint64(static_cast<std::uint64_t>(m_info.timerMax) * 1000);
 }
