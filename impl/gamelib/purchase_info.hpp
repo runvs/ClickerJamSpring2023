@@ -9,6 +9,7 @@ struct PurchaseInfo {
     api::API initialCost;
     std::string animation_file;
     std::string animation_name;
+    int index;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_INFO_HPP

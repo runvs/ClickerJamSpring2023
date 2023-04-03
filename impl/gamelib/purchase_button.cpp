@@ -17,7 +17,9 @@ void PurchaseButton::doCreate()
     m_buttonText = jt::dh::createText(renderTarget(), text, 16);
     m_buttonText->setTextAlign(jt::Text::TextAlign::LEFT);
     m_button->setDrawable(m_buttonText);
-    m_button->setPosition(GP::HudMenuOffset() + GP::HudMenuMargin());
+    m_button->setPosition(GP::HudMenuOffset() + GP::HudMenuMargin()
+        + m_purchaseInfo.index
+            * jt::Vector2f { 0.0f, GP::HudButtonSize().y + GP::HudMenuMargin().y });
 
     m_button->setGameInstance(getGame());
     m_button->create();

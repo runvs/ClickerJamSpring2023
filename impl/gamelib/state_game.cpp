@@ -37,12 +37,20 @@ void StateGame::onCreate()
     add(m_purchaseButtons);
 
     // individual test button
-    PurchaseInfo const info { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json",
-        "idle" };
-    auto button = std::make_shared<PurchaseButton>(*m_bank.get(), info);
-    m_purchaseButtons->push_back(button);
-    add(button);
-
+    {
+        PurchaseInfo const info { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json",
+            "idle", 0 };
+        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), info);
+        m_purchaseButtons->push_back(button);
+        add(button);
+    }
+    {
+        PurchaseInfo const info { "Geologist", api::from_uint64(100u),
+            "assets/human/MiniArcherMan.json", "idle", 1 };
+        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), info);
+        m_purchaseButtons->push_back(button);
+        add(button);
+    }
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
     m_hud = std::make_shared<Hud>();

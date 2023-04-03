@@ -39,6 +39,6 @@ jt::Vector2f GP::HudMenuOffset() { return jt::Vector2f { GetScreenSize().x / 3.0
 jt::Vector2f GP::HudMenuMargin() { return jt::Vector2f { 7.0f, 5.0f }; }
 jt::Vector2f GP::HudMenuSize()
 {
-    return jt::Vector2f { static_cast<int>(GetScreenSize().x / 3.0f) + 1.0f,
+    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
         GP::GetScreenSize().y };
 }
