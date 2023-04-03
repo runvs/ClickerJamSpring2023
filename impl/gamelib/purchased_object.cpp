@@ -48,3 +48,9 @@ void PurchasedObject::buyOne()
     m_numberOfObjects++;
     m_timers.push_back(0.0f);
 }
+
+api::API PurchasedObject::getInputPerMinute() const
+{
+    return m_info.income * api::from_uint64(m_numberOfObjects) * api::from_uint64(1000u * 60u)
+        / api::from_uint64(static_cast<std::uint64_t>(m_info.timerMax) * 1000);
+}

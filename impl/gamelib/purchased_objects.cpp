@@ -37,3 +37,11 @@ void PurchasedObjects::addObject(std::string const& name)
     }
     m_purchasedObjects[name]->buyOne();
 }
+api::API PurchasedObjects::getInputPerMinute() const
+{
+    api::API num;
+    for (auto const& po : m_purchasedObjects) {
+        num = num + po.second->getInputPerMinute();
+    }
+    return num;
+}

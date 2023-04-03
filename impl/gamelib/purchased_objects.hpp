@@ -14,6 +14,8 @@ public:
     PurchasedObjects(BankInterface& bank, std::vector<PurchaseInfo> const& infos);
     void addObject(std::string const& name);
 
+    api::API getInputPerMinute() const;
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;

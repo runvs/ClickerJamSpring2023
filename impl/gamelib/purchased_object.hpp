@@ -13,6 +13,8 @@ public:
 
     void buyOne();
 
+    api::API getInputPerMinute() const;
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;

@@ -20,8 +20,9 @@ void PurchaseButton::doCreate()
     m_buttonText->setTextAlign(jt::Text::TextAlign::LEFT);
     m_button->setDrawable(m_buttonText);
     m_button->setPosition(GP::HudMenuOffset() + GP::HudMenuMargin()
-        + m_purchaseInfo.index
-            * jt::Vector2f { 0.0f, GP::HudButtonSize().y + GP::HudMenuMargin().y });
+        + static_cast<float>(m_purchaseInfo.index)
+            * jt::Vector2f {
+                0.0f, static_cast<float>(GP::HudButtonSize().y) + GP::HudMenuMargin().y });
 
     m_button->setGameInstance(getGame());
     m_button->create();
