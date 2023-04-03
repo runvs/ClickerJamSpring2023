@@ -6,6 +6,7 @@
 #include "button.hpp"
 #include "object_group.hpp"
 #include "purchase_button.hpp"
+#include "purchased_objects.hpp"
 #include "text.hpp"
 #include <bank.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
@@ -36,6 +37,7 @@ private:
 
     std::shared_ptr<jt::ObjectGroup<PurchaseButton>> m_purchaseButtons;
     std::shared_ptr<Bank> m_bank;
+    std::shared_ptr<PurchasedObjects> m_purchasedObjects;
 
     bool m_running { true };
     bool m_hasEnded { false };

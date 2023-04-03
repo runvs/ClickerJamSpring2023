@@ -32,6 +32,8 @@ void StateGame::onCreate()
     m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
     m_menuBackground->setPosition(GP::HudMenuOffset());
 
+    m_purchasedObjects = std::make_shared<PurchasedObjects>(*m_bank.get());
+    add(m_purchasedObjects);
     // group
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
     add(m_purchaseButtons);
@@ -39,7 +41,7 @@ void StateGame::onCreate()
     std::vector<PurchaseInfo> purchaseInfos;
     purchaseInfos.push_back(PurchaseInfo { "Miner", api::from_uint64(10u),
         "assets/human/MiniArcherMan.json", "idle", [this](api::API const& /*cost*/) {
-            // TODO spawn miner
+            m_purchasedObjects->addMiner();
             // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
         } });
@@ -62,7 +64,6 @@ void StateGame::onCreate()
     add(m_vignette);
     m_hud = std::make_shared<Hud>();
     add(m_hud);
-
     // StateGame will call drawObjects itself.
     setAutoDraw(false);
 }
@@ -95,6 +96,12 @@ void StateGame::onUpdate(float const elapsed)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
             m_bank->receiveMoney(api::from_uint64(50));
         }
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::N)
+            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            auto current = m_bank->getCurrentMoney();
+            current = current * api::from_uint64(100);
+            m_bank->receiveMoney(current);
+        }
 #endif
     }
 
@@ -104,6 +111,7 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::onDraw() const
 {
+    std::cout << m_bank->getCurrentMoney().to_string() << std::endl;
     m_background->draw(renderTarget());
 
     m_menuBackground->draw(renderTarget());
