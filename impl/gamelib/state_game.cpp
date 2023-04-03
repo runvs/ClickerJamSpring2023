@@ -5,9 +5,13 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <hud/hud.hpp>
+#include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <shape.hpp>
 #include <state_menu.hpp>
+#include <tweens/tween_alpha.hpp>
+#include <tweens/tween_color.hpp>
+#include <tweens/tween_position.hpp>
 
 void StateGame::onCreate()
 {
@@ -27,6 +31,35 @@ void StateGame::onCreate()
     m_background->update(0.0f);
 
     createPlayer();
+
+    // TODO: refactor to own class
+    m_sparks = jt::ParticleSystem<jt::Shape, 100>::createPS(
+        [this]() {
+            auto shape = std::make_shared<jt::Shape>();
+            shape->makeRect({ 1, 1 }, textureManager());
+            return shape;
+        },
+        [this](auto shape, auto pos) {
+            pos = pos + jt::Random::getRandomPointIn({ -4, -4, 8, 8 });
+            shape->setPosition(pos);
+            auto twp = jt::TweenPosition::create(
+                shape, 0.2f, pos, pos + jt::Random::getRandomPointInRadius(12));
+            add(twp);
+
+            auto twa = jt::TweenAlpha::create(shape, 0.2f, 255, 0);
+            twa->setStartDelay(0.1f);
+            add(twa);
+
+            std::shared_ptr<jt::Tween> twc1
+                = jt::TweenColor::create(shape, 0.1f, jt::colors::Red, jt::colors::Yellow);
+            twc1->addCompleteCallback([this, shape]() {
+                std::shared_ptr<jt::Tween> twc2
+                    = jt::TweenColor::create(shape, 0.1f, jt::colors::Yellow, jt::colors::White);
+                add(twc2);
+            });
+            add(twc1);
+        });
+    add(m_sparks);
 
     m_menuBackground = std::make_shared<jt::Shape>();
     m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
@@ -165,6 +198,7 @@ void StateGame::onUpdate(float const elapsed)
             && (getGame()->input().mouse()->getMousePositionScreen().x < GP::HudMenuOffset().x)) {
             m_bank->receiveMoney(api::from_uint64(1u));
             getGame()->gfx().camera().shake(0.1, 3);
+            m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
         }
         m_menuBackground->update(elapsed);
 

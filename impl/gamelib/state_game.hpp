@@ -11,6 +11,7 @@
 #include <bank.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
+#include <particle_system.hpp>
 #include <memory>
 #include <vector>
 
@@ -38,6 +39,8 @@ private:
     std::shared_ptr<jt::ObjectGroup<PurchaseButton>> m_purchaseButtons;
     std::shared_ptr<Bank> m_bank;
     std::shared_ptr<PurchasedObjects> m_purchasedObjects;
+
+    std::shared_ptr<jt::ParticleSystem<jt::Shape, 100>> m_sparks;
 
     bool m_running { true };
     bool m_hasEnded { false };
