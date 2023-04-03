@@ -39,10 +39,18 @@ void StateGame::onCreate()
     std::vector<PurchaseInfo> purchaseInfos;
     purchaseInfos.push_back(
         PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json", "idle",
-            [this](api::API const& cost) { m_bank->spendMoney(cost); } });
+            [this](api::API const& cost) {
+                // TODO spawn miner
+                // TODO other effects
+                // Note: No need to remove money from bank, button already takes care of this
+            } });
     purchaseInfos.push_back(
         PurchaseInfo { "Geologist", api::from_uint64(100u), "assets/human/MiniArcherMan.json",
-            "idle", [this](api::API const& cost) { m_bank->spendMoney(cost); } });
+            "idle", [this](api::API const& cost) {
+                // TODO spawn geologist
+                // TODO other effects
+                // Note: No need to remove money from bank, button already takes care of this
+            } });
 
     // automatically fill index member variable
     for (auto i = 0u; i != purchaseInfos.size(); ++i) {

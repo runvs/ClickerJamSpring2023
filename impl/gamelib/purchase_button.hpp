@@ -19,6 +19,8 @@ private:
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
+    void updateText();
+
     std::shared_ptr<jt::Button> m_button;
     std::shared_ptr<jt::Text> m_buttonText;
     std::shared_ptr<jt::Animation> m_buttonAnimation;
