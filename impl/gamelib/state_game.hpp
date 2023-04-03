@@ -2,10 +2,12 @@
 #define GAME_STATE_GAME_HPP
 
 #include "animation.hpp"
+#include "bank_interface.hpp"
 #include "button.hpp"
 #include "object_group.hpp"
 #include "purchase_button.hpp"
 #include "text.hpp"
+#include <bank.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
 #include <memory>
@@ -33,12 +35,15 @@ private:
     std::shared_ptr<jt::Shape> m_menuBackground;
 
     std::shared_ptr<jt::ObjectGroup<PurchaseButton>> m_purchaseButtons;
+    std::shared_ptr<Bank> m_bank;
 
     bool m_running { true };
     bool m_hasEnded { false };
 
     int m_scoreP1 { 0 };
     int m_scoreP2 { 0 };
+
+    api::API m_money;
 
     void onCreate() override;
     void onEnter() override;

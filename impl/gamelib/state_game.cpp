@@ -18,6 +18,8 @@ void StateGame::onCreate()
 
     using jt::Shape;
 
+    m_bank = std::make_shared<Bank>();
+
     m_background = std::make_shared<Shape>();
     m_background->makeRect({ w, h }, textureManager());
     m_background->setColor(GP::PaletteBackground());
@@ -36,7 +38,7 @@ void StateGame::onCreate()
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
     add(m_purchaseButtons);
 
-    auto button = std::make_shared<PurchaseButton>();
+    auto button = std::make_shared<PurchaseButton>(*m_bank.get());
     m_purchaseButtons->push_back(button);
     add(button);
 
