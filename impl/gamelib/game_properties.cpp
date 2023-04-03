@@ -42,4 +42,4 @@ jt::Vector2f GP::HudMenuSize()
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
         GP::GetScreenSize().y };
 }
-int GP::PurchasedNumberOfMinersPerRow() { return 25; }
+int GP::PurchasedNumberOfMinersPerLine() { return 25; }

@@ -1,51 +1,39 @@
 #include "purchased_objects.hpp"
 #include <game_properties.hpp>
 
-PurchasedObjects::PurchasedObjects(BankInterface& bank)
+PurchasedObjects::PurchasedObjects(BankInterface& bank, std::vector<PurchaseInfo> const& infos)
     : m_bank { bank }
+    , m_infos { infos }
 {
 }
 
 void PurchasedObjects::doCreate()
 {
-    m_miner = std::make_shared<jt::Animation>();
-    m_miner->loadFromJson("assets/human/MiniArcherMan.json", textureManager());
-    m_miner->play("idle");
+    for (auto const& i : m_infos) {
+        m_purchasedObjects[i.name] = std::make_shared<PurchasedObject>(m_bank, i);
+        m_purchasedObjects[i.name]->setGameInstance(getGame());
+        m_purchasedObjects[i.name]->create();
+    }
 }
 
 void PurchasedObjects::doUpdate(float const elapsed)
 {
-    m_miner->update(elapsed);
-
-    for (auto& t : m_minerIncomeTimers) {
-        t += elapsed;
-        if (t >= m_minerIncomeTimerMax) {
-            t -= m_minerIncomeTimerMax;
-            m_bank.receiveMoney(api::from_uint64(1u));
-        }
+    for (auto& po : m_purchasedObjects) {
+        po.second->update(elapsed);
     }
 }
 
-void PurchasedObjects::doDraw() const { drawMiners(); }
-
-void PurchasedObjects::drawMiners() const
+void PurchasedObjects::doDraw() const
 {
-    for (auto i = 0; i != m_numberOfMiners; ++i) {
-        int x = i % GP::PurchasedNumberOfMinersPerRow();
-        int y = i / GP::PurchasedNumberOfMinersPerRow();
-        float xOffset = 0.0f;
-        if (y % 2 == 1) {
-            xOffset = 5.0f;
-        }
-        m_miner->setPosition(
-            jt::Vector2f { xOffset - 5, 5 } + jt::Vector2f { x * 10.0f, y * 8.0f });
-        m_miner->update(0.0f);
-        m_miner->draw(renderTarget());
+    for (auto const& po : m_purchasedObjects) {
+        po.second->draw();
     }
 }
 
-void PurchasedObjects::addMiner()
+void PurchasedObjects::addObject(std::string const& name)
 {
-    ++m_numberOfMiners;
-    m_minerIncomeTimers.push_back(0.0f);
+    if (m_purchasedObjects.count(name) != 1) {
+        throw std::invalid_argument { "Invalid object in PurchasedObjects" };
+    }
+    m_purchasedObjects[name]->buyOne();
 }

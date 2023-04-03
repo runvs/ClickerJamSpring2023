@@ -32,25 +32,27 @@ void StateGame::onCreate()
     m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
     m_menuBackground->setPosition(GP::HudMenuOffset());
 
-    m_purchasedObjects = std::make_shared<PurchasedObjects>(*m_bank.get());
-    add(m_purchasedObjects);
     // group
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
     add(m_purchaseButtons);
 
     std::vector<PurchaseInfo> purchaseInfos;
-    purchaseInfos.push_back(PurchaseInfo { "Miner", api::from_uint64(10u),
-        "assets/human/MiniArcherMan.json", "idle", [this](api::API const& /*cost*/) {
-            m_purchasedObjects->addMiner();
-            // TODO other effects
-            // Note: No need to remove money from bank, button already takes care of this
-        } });
+    purchaseInfos.push_back(
+        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json", "idle",
+            [this](api::API const& /*cost*/) {
+                m_purchasedObjects->addObject("Miner");
+                // TODO other effects
+                // Note: No need to remove money from bank, button already takes care of this
+            },
+            GP::PurchasedNumberOfMinersPerLine(), 1.5f, api::from_uint64(1u) });
     purchaseInfos.push_back(PurchaseInfo { "Geologist", api::from_uint64(100u),
-        "assets/human/MiniArcherMan.json", "idle", [this](api::API const& /*cost*/) {
-            // TODO spawn geologist
+        "assets/human/MiniArcherMan.json", "idle",
+        [this](api::API const& /*cost*/) {
+            m_purchasedObjects->addObject("Geologist");
             // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
-        } });
+        },
+        25, 2.0f, api::from_uint64(15u) });
 
     // automatically fill index member variable
     for (auto i = 0u; i != purchaseInfos.size(); ++i) {
@@ -59,6 +61,9 @@ void StateGame::onCreate()
         m_purchaseButtons->push_back(button);
         add(button);
     }
+
+    m_purchasedObjects = std::make_shared<PurchasedObjects>(*m_bank.get(), purchaseInfos);
+    add(m_purchasedObjects);
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);

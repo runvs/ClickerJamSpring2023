@@ -11,6 +11,9 @@ struct PurchaseInfo {
     std::string animation_file { "" };
     std::string animation_name { "" };
     std::function<void(api::API const& cost)> purchaseCallback { nullptr };
+    int objectsPerLine { 25 };
+    float timerMax { 1.5f };
+    api::API income { api::from_uint64(1u) };
 
     // arguments that can be filled automatically
     int index { 0 };
