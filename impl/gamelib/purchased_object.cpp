@@ -12,7 +12,7 @@ void PurchasedObject::doCreate()
 {
     m_animation = std::make_shared<jt::Animation>();
     m_animation->loadFromJson(m_info.animation_file, textureManager());
-    m_animation->play(m_info.animation_name);
+    m_animation->play(m_info.animation_name_purchased);
 }
 void PurchasedObject::doUpdate(float const elapsed)
 {

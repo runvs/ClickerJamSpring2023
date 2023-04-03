@@ -38,7 +38,7 @@ void StateGame::onCreate()
 
     std::vector<PurchaseInfo> purchaseInfos;
     purchaseInfos.push_back(
-        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/miner.json", "idle",
+        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/miner.json", "idle", "mine",
             [this](api::API const& /*cost*/) {
                 m_purchasedObjects->addObject("Miner");
                 // TODO other effects
@@ -46,7 +46,7 @@ void StateGame::onCreate()
             },
             GP::PurchasedNumberOfMinersPerLine(), 1.5f, api::from_uint64(1u) });
     purchaseInfos.push_back(PurchaseInfo { "Geologist", api::from_uint64(100u),
-        "assets/human/MiniArcherMan.json", "idle",
+        "assets/human/MiniArcherMan.json", "idle", "attack",
         [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Geologist");
             // TODO other effects

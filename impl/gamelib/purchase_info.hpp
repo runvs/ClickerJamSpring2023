@@ -9,7 +9,8 @@ struct PurchaseInfo {
     std::string name { "" };
     api::API initialCost { api::from_uint64(0u) };
     std::string animation_file { "" };
-    std::string animation_name { "" };
+    std::string animation_name_menu { "" };
+    std::string animation_name_purchased { "" };
     std::function<void(api::API const& cost)> purchaseCallback { nullptr };
     int objectsPerLine { 25 };
     float timerMax { 1.5f };
