@@ -29,6 +29,8 @@ private:
     BankInterface& m_bank;
 
     PurchaseInfo m_purchaseInfo;
+
+    bool m_canPurchase { false };
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP

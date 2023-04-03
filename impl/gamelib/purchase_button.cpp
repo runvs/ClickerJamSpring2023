@@ -31,7 +31,7 @@ void PurchaseButton::doCreate()
         m_bank.spendMoney(m_cost);
         m_purchaseInfo.purchaseCallback(m_cost);
         // TODO move cost increase into GP
-        m_cost = m_cost * api::from_uint64(110) / api::from_uint64(100);
+        m_cost = m_cost * api::from_uint64(110) / api::from_uint64(100) + api::from_uint64(2);
         updateText();
     });
 
@@ -49,7 +49,15 @@ void PurchaseButton::doUpdate(float const elapsed)
     m_buttonAnimation->setPosition(m_buttonText->getPosition());
     m_buttonAnimation->update(elapsed);
 
-    m_button->setActive(m_bank.canAffordAmount(m_cost));
+    m_canPurchase = m_bank.canAffordAmount(m_cost);
+    m_button->setActive(m_canPurchase);
+    if (m_canPurchase) {
+        m_buttonAnimation->setColor(jt::colors::White);
+        m_buttonText->setColor(jt::colors::White);
+    } else {
+        m_buttonAnimation->setColor(jt::colors::Gray);
+        m_buttonText->setColor(jt::colors::Gray);
+    }
 }
 
 void PurchaseButton::doDraw() const

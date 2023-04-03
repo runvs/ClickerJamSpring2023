@@ -25,6 +25,7 @@ void PurchasedObjects::doUpdate(float const elapsed)
         }
     }
 }
+
 void PurchasedObjects::doDraw() const { drawMiners(); }
 
 void PurchasedObjects::drawMiners() const
