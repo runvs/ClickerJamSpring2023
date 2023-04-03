@@ -36,8 +36,8 @@ public:
 
     static jt::Vector2u HudButtonSize();
     static jt::Vector2f HudMenuOffset();
+    static jt::Vector2f HudMenuSize();
     static jt::Vector2f HudMenuMargin();
-
 };
 
 #endif

@@ -7,7 +7,9 @@ class Bank : public BankInterface {
 public:
     api::API getCurrentMoney() override;
     bool canAffordAmount(api::API const& amount) override;
+
     void spendMoney(api::API const& amount) override;
+    void receiveMoney(api::API const& amount) override;
 
 private:
     api::API m_money;

@@ -2,15 +2,19 @@
 #include "drawable_helpers.hpp"
 #include "game_properties.hpp"
 
-PurchaseButton::PurchaseButton(BankInterface& finances)
-    : m_finances { finances }
+PurchaseButton::PurchaseButton(BankInterface& finances, PurchaseInfo const& info)
+    : m_bank { finances }
+    , m_purchaseInfo { info }
 {
 }
 
 void PurchaseButton::doCreate()
 {
+    m_cost = m_purchaseInfo.initialCost;
+
     m_button = std::make_shared<jt::Button>(GP::HudButtonSize(), textureManager());
-    m_buttonText = jt::dh::createText(renderTarget(), "    Miner", 16);
+    std::string const text = "    " + m_purchaseInfo.name + " " + m_cost.to_exp_string();
+    m_buttonText = jt::dh::createText(renderTarget(), text, 16);
     m_buttonText->setTextAlign(jt::Text::TextAlign::LEFT);
     m_button->setDrawable(m_buttonText);
     m_button->setPosition(GP::HudMenuOffset() + GP::HudMenuMargin());
@@ -19,10 +23,8 @@ void PurchaseButton::doCreate()
     m_button->create();
 
     m_buttonAnimation = std::make_shared<jt::Animation>();
-    m_buttonAnimation->loadFromJson("assets/human/MiniArcherMan.json", textureManager());
-    m_buttonAnimation->play("idle");
-
-    m_cost = api::from_uint64(10);
+    m_buttonAnimation->loadFromJson(m_purchaseInfo.animation_file, textureManager());
+    m_buttonAnimation->play(m_purchaseInfo.animation_name);
 }
 
 void PurchaseButton::doUpdate(float const elapsed)
@@ -34,8 +36,7 @@ void PurchaseButton::doUpdate(float const elapsed)
     m_buttonAnimation->setPosition(m_buttonText->getPosition());
     m_buttonAnimation->update(elapsed);
 
-    auto const cmp = api::compare(m_finances.getCurrentMoney(), m_cost);
-    m_button->setActive(cmp >= 0);
+    m_button->setActive(m_bank.canAffordAmount(m_cost));
 }
 
 void PurchaseButton::doDraw() const

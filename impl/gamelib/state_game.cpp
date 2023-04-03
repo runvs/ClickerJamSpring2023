@@ -28,17 +28,18 @@ void StateGame::onCreate()
 
     createPlayer();
 
-    // TODO extract into separate class
-
     m_menuBackground = std::make_shared<jt::Shape>();
-    m_menuBackground->makeRect(
-        jt::Vector2f { GP::GetScreenSize().x / 4.0f, GP::GetScreenSize().y }, textureManager());
-    m_menuBackground->setPosition(jt::Vector2f { GP::GetScreenSize().x / 4.0f * 3, 0.0f });
+    m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
+    m_menuBackground->setPosition(GP::HudMenuOffset());
 
+    // group
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
     add(m_purchaseButtons);
 
-    auto button = std::make_shared<PurchaseButton>(*m_bank.get());
+    // individual test button
+    PurchaseInfo const info { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json",
+        "idle" };
+    auto button = std::make_shared<PurchaseButton>(*m_bank.get(), info);
     m_purchaseButtons->push_back(button);
     add(button);
 

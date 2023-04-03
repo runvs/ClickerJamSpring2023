@@ -6,12 +6,13 @@
 #include <bank_interface.hpp>
 #include <button.hpp>
 #include <game_object.hpp>
+#include <purchase_info.hpp>
 #include <text.hpp>
 #include <memory>
 
 class PurchaseButton : public ::jt::GameObject {
 public:
-    explicit PurchaseButton(BankInterface& finances);
+    PurchaseButton(BankInterface& finances, PurchaseInfo const& info);
 
 private:
     void doCreate() override;
@@ -23,7 +24,9 @@ private:
     std::shared_ptr<jt::Animation> m_buttonAnimation;
 
     api::API m_cost;
-    BankInterface& m_finances;
+    BankInterface& m_bank;
+
+    PurchaseInfo m_purchaseInfo;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP

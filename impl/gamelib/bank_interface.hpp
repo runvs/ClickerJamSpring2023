@@ -10,6 +10,7 @@ public:
     virtual api::API getCurrentMoney() = 0;
     virtual bool canAffordAmount(api::API const& amount) = 0;
     virtual void spendMoney(api::API const& amount) = 0;
+    virtual void receiveMoney(api::API const& amount) = 0;
 };
 
 #endif // CLICKERJAMSPRING2023_BANK_INTERFACE_HPP
