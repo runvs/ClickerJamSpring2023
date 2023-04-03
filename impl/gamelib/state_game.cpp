@@ -38,7 +38,7 @@ void StateGame::onCreate()
 
     std::vector<PurchaseInfo> purchaseInfos;
     purchaseInfos.push_back(
-        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json", "idle",
+        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/miner.json", "idle",
             [this](api::API const& /*cost*/) {
                 m_purchasedObjects->addObject("Miner");
                 // TODO other effects
