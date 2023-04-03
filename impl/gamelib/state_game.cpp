@@ -36,21 +36,22 @@ void StateGame::onCreate()
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
     add(m_purchaseButtons);
 
-    // individual test button
-    {
-        PurchaseInfo const info { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json",
-            "idle", 0 };
-        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), info);
+    std::vector<PurchaseInfo> purchaseInfos;
+    purchaseInfos.push_back(
+        PurchaseInfo { "Miner", api::from_uint64(10u), "assets/human/MiniArcherMan.json", "idle",
+            [this](api::API const& cost) { m_bank->spendMoney(cost); } });
+    purchaseInfos.push_back(
+        PurchaseInfo { "Geologist", api::from_uint64(100u), "assets/human/MiniArcherMan.json",
+            "idle", [this](api::API const& cost) { m_bank->spendMoney(cost); } });
+
+    // automatically fill index member variable
+    for (auto i = 0u; i != purchaseInfos.size(); ++i) {
+        purchaseInfos[i].index = static_cast<int>(i);
+        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), purchaseInfos[i]);
         m_purchaseButtons->push_back(button);
         add(button);
     }
-    {
-        PurchaseInfo const info { "Geologist", api::from_uint64(100u),
-            "assets/human/MiniArcherMan.json", "idle", 1 };
-        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), info);
-        m_purchaseButtons->push_back(button);
-        add(button);
-    }
+
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
     m_hud = std::make_shared<Hud>();
@@ -82,6 +83,13 @@ void StateGame::onUpdate(float const elapsed)
             endGame();
         }
         m_menuBackground->update(elapsed);
+
+#if JT_ENABLE_DEBUG
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::M)
+            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            m_bank->receiveMoney(api::from_uint64(50));
+        }
+#endif
     }
 
     m_background->update(elapsed);
