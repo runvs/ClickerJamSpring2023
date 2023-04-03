@@ -395,3 +395,4 @@ cmake-build-*
 
 doc/doxygen/html
 doc/doxygen/latex
+assets_src/
