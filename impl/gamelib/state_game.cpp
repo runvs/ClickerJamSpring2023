@@ -160,6 +160,12 @@ void StateGame::onUpdate(float const elapsed)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
             endGame();
         }
+
+        if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
+            && (getGame()->input().mouse()->getMousePositionScreen().x < GP::HudMenuOffset().x)) {
+            m_bank->receiveMoney(api::from_uint64(1u));
+            getGame()->gfx().camera().shake(0.1, 3);
+        }
         m_menuBackground->update(elapsed);
 
 #if JT_ENABLE_DEBUG
