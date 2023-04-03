@@ -21,7 +21,7 @@ void PurchasedObject::doUpdate(float const elapsed)
         t += elapsed;
         if (t >= m_info.timerMax) {
             t -= m_info.timerMax;
-            m_bank.receiveMoney(api::from_uint64(1u));
+            m_bank.receiveMoney(m_info.income);
         }
     }
 }
