@@ -63,9 +63,9 @@ void StateGame::onCreate()
         PurchaseInfo geologist;
         geologist.name = "Geologist";
 
-        geologist.animationFile = "assets/human/MiniArcherMan.json";
+        geologist.animationFile = "assets/human/geologist.json";
         geologist.animationNameMenu = "idle";
-        geologist.animationNamePurchased = "attack";
+        geologist.animationNamePurchased = "mine";
 
         geologist.initialCost = api::from_uint64(100u);
         geologist.purchaseCallback = [this](api::API const& /*cost*/) {
