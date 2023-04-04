@@ -14,6 +14,10 @@
 #include <tweens/tween_color.hpp>
 #include <tweens/tween_position.hpp>
 
+#ifdef JT_ENABLE_WEB
+#include <emscripten.h>
+#endif
+
 void StateGame::onCreate()
 {
     m_world = std::make_shared<jt::Box2DWorldImpl>(jt::Vector2f { 0.0f, 0.0f });
@@ -329,8 +333,12 @@ void StateGame::deserialize(std::string const& str)
 std::string StateGame::save()
 {
     getGame()->logger().info("Save");
+
 #if JT_ENABLE_WEB
-    // TODO implement
+    std::string const json_string = serialize();
+    std::string const command = "save(" + json_string + ")";
+    emscripten_run_script(command.c_str());
+    return "";
 #else
     std::ofstream outfile { "savegame.dat" };
     outfile << serialize() << std::endl;
@@ -343,7 +351,8 @@ void StateGame::load(std::string const& str)
 {
     getGame()->logger().info("Load");
 #if JT_ENABLE_WEB
-    // TODO implement
+    auto const savedata = emscripten_run_script_string("load()");
+    deserialize(savedata);
 #else
     std::ifstream infile { "savegame.dat" };
     std::string savedata;
