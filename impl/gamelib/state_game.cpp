@@ -123,9 +123,9 @@ void StateGame::onCreate()
         PurchaseInfo driller;
         driller.name = "Driller";
 
-        driller.animationFile = "assets/human/MiniArcherMan.json";
+        driller.animationFile = "assets/human/driller.json";
         driller.animationNameMenu = "idle";
-        driller.animationNamePurchased = "attack";
+        driller.animationNamePurchased = "mine";
 
         driller.initialCost = api::from_uint64(1000u);
         driller.purchaseCallback = [this](api::API const& /*cost*/) {
