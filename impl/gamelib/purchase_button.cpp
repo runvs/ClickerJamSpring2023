@@ -88,3 +88,12 @@ void PurchaseButton::updateText()
     std::string const text = "    " + m_purchaseInfo.name + " " + m_cost.to_exp_string();
     m_buttonText->setText(text);
 }
+api::API PurchaseButton::getPrice() const { return m_cost; }
+
+void PurchaseButton::setPrice(api::API const& price)
+{
+    m_cost = price;
+    updateText();
+}
+std::string PurchaseButton::getButtonName() const { return m_purchaseInfo.name; }
+void PurchaseButton::hide() { m_hasBeenShown = false; }

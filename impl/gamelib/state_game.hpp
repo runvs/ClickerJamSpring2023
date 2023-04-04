@@ -12,6 +12,7 @@
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
 #include <particle_system.hpp>
+#include <serialization.hpp>
 #include <memory>
 #include <vector>
 
@@ -27,6 +28,9 @@ class Hud;
 class StateGame : public jt::GameState {
 public:
     std::string getName() const override;
+
+    std::string serialize() const;
+    void deserialize(std::string const&);
 
 private:
     std::shared_ptr<jt::Shape> m_background;

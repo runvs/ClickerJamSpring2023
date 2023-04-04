@@ -43,3 +43,13 @@ void PurchasedObjects::addObject(std::string const& name)
     }
 }
 api::API PurchasedObjects::getInputPerSecond() const { return m_inputPerSecondCached; }
+std::map<std::string, std::shared_ptr<PurchasedObject>> PurchasedObjects::getObjects() const
+{
+    return m_purchasedObjects;
+}
+void PurchasedObjects::clean()
+{
+    for (auto& po : m_purchasedObjects) {
+        po.second->clean();
+    }
+}
