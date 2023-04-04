@@ -42,6 +42,7 @@ public:
     static int PurchasedNumberOfMinersPerLine();
 
     static float PurchaseButtonRevealAtPercentage();
+    static float PurchaseButtonCostIncreasePercent();
 };
 
 #endif

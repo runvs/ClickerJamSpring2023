@@ -32,7 +32,9 @@ void PurchaseButton::doCreate()
         m_bank.spendMoney(m_cost);
         m_purchaseInfo.purchaseCallback(m_cost);
         // TODO move cost increase into GP
-        m_cost = m_cost * api::from_uint64(110) / api::from_uint64(100) + api::from_uint64(1);
+        m_cost = m_cost * api::from_uint64(1000 * GP::PurchaseButtonCostIncreasePercent())
+                / api::from_uint64(1000)
+            + api::from_uint64(1u);
         updateText();
     });
 

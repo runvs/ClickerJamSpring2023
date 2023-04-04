@@ -109,7 +109,7 @@ void StateGame::onCreate()
 
         geologist.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
         geologist.timerMax = 1.0f;
-        geologist.income = api::from_uint64(11u);
+        geologist.income = api::from_uint64(8u);
 
         purchaseInfos.push_back(geologist);
     }
@@ -130,7 +130,7 @@ void StateGame::onCreate()
 
         driller.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
         driller.timerMax = 1.0f;
-        driller.income = api::from_uint64(120u);
+        driller.income = api::from_uint64(70u);
 
         purchaseInfos.push_back(driller);
     }
@@ -151,7 +151,7 @@ void StateGame::onCreate()
 
         blastMaster.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
         blastMaster.timerMax = 1.0f;
-        blastMaster.income = api::from_uint64(2000u);
+        blastMaster.income = api::from_uint64(600u);
 
         purchaseInfos.push_back(blastMaster);
     }
