@@ -4,6 +4,7 @@
 #include "animation.hpp"
 #include "bank_interface.hpp"
 #include "button.hpp"
+#include "mineshaft/mine_shaft_area.hpp"
 #include "object_group.hpp"
 #include "purchase_button.hpp"
 #include "purchased_objects.hpp"
@@ -39,7 +40,7 @@ private:
     std::shared_ptr<jt::Shape> m_background;
     std::shared_ptr<jt::Vignette> m_vignette;
     std::shared_ptr<Hud> m_hud;
-    std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
+    std::shared_ptr<MineShaftArea> m_mine_shaft_area;
 
     std::shared_ptr<jt::Shape> m_menuBackground;
 

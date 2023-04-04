@@ -42,6 +42,16 @@ jt::Vector2f GP::HudMenuSize()
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
         GP::GetScreenSize().y };
 }
-int GP::PurchasedNumberOfMinersPerLine() { return 25; }
+jt::Vector2f GP::HudMineShaftOffset()
+{
+    return jt::Vector2f { GetScreenSize().x / 3.0f * 1.0f, 0.0f };
+};
+jt::Vector2f GP::HudMineShaftSize()
+{
+    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
+        GP::GetScreenSize().y };
+};
+
+int GP::PurchasedNumberOfMinersPerLine() { return 12; }
 float GP::PurchaseButtonRevealAtPercentage() { return 0.85f; }
 float GP::PurchaseButtonCostIncreasePercent() { return 1.2f; }

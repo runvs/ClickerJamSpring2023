@@ -38,6 +38,8 @@ public:
     static jt::Vector2f HudMenuOffset();
     static jt::Vector2f HudMenuSize();
     static jt::Vector2f HudMenuMargin();
+    static jt::Vector2f HudMineShaftSize();
+    static jt::Vector2f HudMineShaftOffset();
 
     static int PurchasedNumberOfMinersPerLine();
 

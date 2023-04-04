@@ -16,8 +16,6 @@
 
 void StateGame::onCreate()
 {
-    m_world = std::make_shared<jt::Box2DWorldImpl>(jt::Vector2f { 0.0f, 0.0f });
-
     float const w = static_cast<float>(GP::GetWindowSize().x);
     float const h = static_cast<float>(GP::GetWindowSize().y);
 
@@ -30,6 +28,13 @@ void StateGame::onCreate()
     m_background->setColor(GP::PaletteBackground());
     m_background->setIgnoreCamMovement(true);
     m_background->update(0.0f);
+
+    m_mine_shaft_area = std::make_shared<MineShaftArea>([this](api::API const& value) {
+        m_bank->receiveMoney(value);
+        getGame()->gfx().camera().shake(0.1, 3);
+        m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
+    });
+    add(m_mine_shaft_area);
 
     createPlayer();
 
@@ -214,7 +219,6 @@ void StateGame::createPlayer() { }
 void StateGame::onUpdate(float const elapsed)
 {
     if (m_running) {
-        m_world->step(elapsed, GP::PhysicVelocityIterations(), GP::PhysicPositionIterations());
         // update game logic here
 
         m_hud->getDepthScore()->notify(api::from_uint64(static_cast<std::uint64_t>(getAge())));
@@ -226,12 +230,12 @@ void StateGame::onUpdate(float const elapsed)
             endGame();
         }
 
-        if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
-            && (getGame()->input().mouse()->getMousePositionScreen().x < GP::HudMenuOffset().x)) {
-            m_bank->receiveMoney(api::from_uint64(1u));
-            getGame()->gfx().camera().shake(0.1, 3);
-            m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
-        }
+        //        if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
+        //            && (getGame()->input().mouse()->getMousePositionScreen().x <
+        //            GP::HudMenuOffset().x)) { m_bank->receiveMoney(api::from_uint64(1u));
+        //            getGame()->gfx().camera().shake(0.1, 3);
+        //            m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
+        //        }
         m_menuBackground->update(elapsed);
 
 #if JT_ENABLE_DEBUG
@@ -272,6 +276,7 @@ void StateGame::onDraw() const
 
     m_menuBackground->draw(renderTarget());
     drawObjects();
+    m_sparks->draw();
     m_vignette->draw();
     m_hud->draw();
 }
