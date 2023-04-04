@@ -14,6 +14,12 @@
 #include <tweens/tween_color.hpp>
 #include <tweens/tween_position.hpp>
 
+
+#ifdef JT_ENABLE_WEB
+#include <cstring>
+#include <emscripten.h>
+#endif
+
 void StateGame::onCreate()
 {
     float const w = static_cast<float>(GP::GetWindowSize().x);
@@ -124,9 +130,9 @@ void StateGame::onCreate()
         PurchaseInfo driller;
         driller.name = "Driller";
 
-        driller.animationFile = "assets/human/MiniArcherMan.json";
+        driller.animationFile = "assets/human/driller.json";
         driller.animationNameMenu = "idle";
-        driller.animationNamePurchased = "attack";
+        driller.animationNamePurchased = "mine";
 
         driller.initialCost = api::from_uint64(1000u);
         driller.purchaseCallback = [this](api::API const& /*cost*/) {
@@ -334,8 +340,12 @@ void StateGame::deserialize(std::string const& str)
 std::string StateGame::save()
 {
     getGame()->logger().info("Save");
+
 #if JT_ENABLE_WEB
-    // TODO implement
+    std::string const json_string = serialize();
+    std::string const command = "save(" + json_string + ")";
+    emscripten_run_script(command.c_str());
+    return "";
 #else
     std::ofstream outfile { "savegame.dat" };
     outfile << serialize() << std::endl;
@@ -348,9 +358,24 @@ void StateGame::load(std::string const& str)
 {
     getGame()->logger().info("Load");
 #if JT_ENABLE_WEB
-    // TODO implement
+//    std::cout << "pre load\n";
+    auto const savedata = emscripten_run_script_string("load()");
+    std::cout << "savedata: '" << savedata << "'" << std::endl;
+//    std::cout << "post load\n";
+    if (strcmp("",savedata) == 0) {
+        getGame()->logger().warning("empty savedata");
+        return;
+    }
+
+    deserialize(savedata);
+//    std::cout << "post deserialize\n";
 #else
     std::ifstream infile { "savegame.dat" };
+    if (!infile.good())
+    {
+        getGame()->logger().warning("empty savedata");
+        return;
+    }
     std::string savedata;
     infile >> savedata;
     deserialize(savedata);
