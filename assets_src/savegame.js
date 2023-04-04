@@ -5,5 +5,5 @@ function save(data) {
 
 function load() {
     console.log('Loading game data...');
-    return localStorage.getItem('SaveGame');
+    return localStorage.getItem('SaveGame') || '';
 }
