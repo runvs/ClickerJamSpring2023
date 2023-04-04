@@ -351,15 +351,21 @@ void StateGame::load(std::string const& str)
 {
     getGame()->logger().info("Load");
 #if JT_ENABLE_WEB
+//    std::cout << "pre load\n";
     auto const savedata = emscripten_run_script_string("load()");
+//    std::cout << "post load\n";
     if (savedata == "") {
+        getGame()->logger().warning("empty savedata");
         return;
     }
+//    std::cout << savedata << std::endl;
     deserialize(savedata);
+//    std::cout << "post deserialize\n";
 #else
     std::ifstream infile { "savegame.dat" };
     if (!infile.good())
     {
+        getGame()->logger().warning("empty savedata");
         return;
     }
     std::string savedata;
