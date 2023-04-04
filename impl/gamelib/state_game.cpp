@@ -5,6 +5,7 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <hud/hud.hpp>
+#include <nlohmann.hpp>
 #include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <shape.hpp>
@@ -214,6 +215,18 @@ void StateGame::onUpdate(float const elapsed)
             current = current * api::from_uint64(100);
             m_bank->receiveMoney(current);
         }
+
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)
+            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            std::cout << serialize() << std::endl;
+        }
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::L)
+            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            deserialize("{\"bank\":{\"money\":{\"value\":[3]}},\"buttons\":{\"Blaster\":{\"value\":"
+                        "[16,39]},\"Driller\":{\"value\":[232,3]},\"Geologist\":{\"value\":[100]},"
+                        "\"Miner\":{\"value\":[10]}},\"purchased\":{\"Blaster\":0,\"Driller\":0,"
+                        "\"Geologist\":0,\"Miner\":1}}");
+        }
 #endif
     }
 
@@ -246,3 +259,40 @@ void StateGame::endGame()
 }
 
 std::string StateGame::getName() const { return "State Game"; }
+
+std::string StateGame::serialize() const
+{
+    nlohmann::json j;
+    std::map<std::string, api::API> buttonPrices;
+    for (auto const& btn : *m_purchaseButtons) {
+        buttonPrices[btn.lock()->getButtonName()] = btn.lock()->getPrice();
+    }
+    j["buttons"] = buttonPrices;
+    j["bank"] = *m_bank;
+    j["purchased"] = *m_purchasedObjects;
+    return j.dump();
+}
+
+void StateGame::deserialize(std::string const& str)
+{
+    nlohmann::json j = nlohmann::json::parse(str);
+    // buttons
+    std::map<std::string, api::API> buttonPrices = j["buttons"];
+    for (auto const& btn : *m_purchaseButtons) {
+        auto b = btn.lock();
+        b->setPrice(buttonPrices.at(b->getButtonName()));
+        b->hide();
+    }
+
+    // bank
+    *m_bank = j["bank"];
+
+    // purchased objects
+    m_purchasedObjects->clean();
+    auto const purchased = j["purchased"];
+    for (auto kvp : purchased.items()) {
+        for (int i = 0; i != kvp.value(); ++i) {
+            m_purchasedObjects->addObject(kvp.key());
+        }
+    }
+}
