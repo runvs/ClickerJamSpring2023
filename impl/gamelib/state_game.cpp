@@ -37,6 +37,7 @@ void StateGame::onCreate()
         [this]() {
             auto shape = std::make_shared<jt::Shape>();
             shape->makeRect({ 1, 1 }, textureManager());
+            shape->setPosition({ -5000, -5000 });
             return shape;
         },
         [this](auto shape, auto pos) {
