@@ -5,7 +5,7 @@
 #include <bank_interface.hpp>
 class Bank : public BankInterface {
 public:
-    api::API getCurrentMoney() override;
+    api::API getCurrentMoney() const override;
     bool canAffordAmount(api::API const& amount) override;
 
     void spendMoney(api::API const& amount) override;
