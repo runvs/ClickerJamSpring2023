@@ -14,7 +14,9 @@
 #include <tweens/tween_color.hpp>
 #include <tweens/tween_position.hpp>
 
+
 #ifdef JT_ENABLE_WEB
+#include <cstring>
 #include <emscripten.h>
 #endif
 
@@ -353,12 +355,13 @@ void StateGame::load(std::string const& str)
 #if JT_ENABLE_WEB
 //    std::cout << "pre load\n";
     auto const savedata = emscripten_run_script_string("load()");
+    std::cout << "savedata: '" << savedata << "'" << std::endl;
 //    std::cout << "post load\n";
-    if (savedata == "") {
+    if (strcmp("",savedata) == 0) {
         getGame()->logger().warning("empty savedata");
         return;
     }
-//    std::cout << savedata << std::endl;
+
     deserialize(savedata);
 //    std::cout << "post deserialize\n";
 #else
