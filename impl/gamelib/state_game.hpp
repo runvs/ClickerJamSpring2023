@@ -11,6 +11,8 @@
 #include <bank.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
+#include <particle_system.hpp>
+#include <serialization.hpp>
 #include <memory>
 #include <vector>
 
@@ -27,6 +29,12 @@ class StateGame : public jt::GameState {
 public:
     std::string getName() const override;
 
+    std::string serialize() const;
+    void deserialize(std::string const&);
+
+    std::string save();
+    void load(std::string const& str);
+
 private:
     std::shared_ptr<jt::Shape> m_background;
     std::shared_ptr<jt::Vignette> m_vignette;
@@ -39,11 +47,10 @@ private:
     std::shared_ptr<Bank> m_bank;
     std::shared_ptr<PurchasedObjects> m_purchasedObjects;
 
+    std::shared_ptr<jt::ParticleSystem<jt::Shape, 100>> m_sparks;
+
     bool m_running { true };
     bool m_hasEnded { false };
-
-    int m_scoreP1 { 0 };
-    int m_scoreP2 { 0 };
 
     api::API m_money;
 

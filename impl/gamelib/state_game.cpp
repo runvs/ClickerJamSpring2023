@@ -5,9 +5,14 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <hud/hud.hpp>
+#include <nlohmann.hpp>
+#include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <shape.hpp>
 #include <state_menu.hpp>
+#include <tweens/tween_alpha.hpp>
+#include <tweens/tween_color.hpp>
+#include <tweens/tween_position.hpp>
 
 void StateGame::onCreate()
 {
@@ -28,6 +33,36 @@ void StateGame::onCreate()
 
     createPlayer();
 
+    // TODO: refactor to own class
+    m_sparks = jt::ParticleSystem<jt::Shape, 100>::createPS(
+        [this]() {
+            auto shape = std::make_shared<jt::Shape>();
+            shape->makeRect({ 1, 1 }, textureManager());
+            shape->setPosition({ -5000, -5000 });
+            return shape;
+        },
+        [this](auto shape, auto pos) {
+            pos = pos + jt::Random::getRandomPointIn({ -4, -4, 8, 8 });
+            shape->setPosition(pos);
+            auto twp = jt::TweenPosition::create(
+                shape, 0.2f, pos, pos + jt::Random::getRandomPointInRadius(12));
+            add(twp);
+
+            auto twa = jt::TweenAlpha::create(shape, 0.2f, 255, 0);
+            twa->setStartDelay(0.1f);
+            add(twa);
+
+            std::shared_ptr<jt::Tween> twc1
+                = jt::TweenColor::create(shape, 0.1f, jt::colors::Red, jt::colors::Yellow);
+            twc1->addCompleteCallback([this, shape]() {
+                std::shared_ptr<jt::Tween> twc2
+                    = jt::TweenColor::create(shape, 0.1f, jt::colors::Yellow, jt::colors::White);
+                add(twc2);
+            });
+            add(twc1);
+        });
+    add(m_sparks);
+
     m_menuBackground = std::make_shared<jt::Shape>();
     m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
     m_menuBackground->setPosition(GP::HudMenuOffset());
@@ -46,7 +81,7 @@ void StateGame::onCreate()
         miner.animationNameMenu = "idle";
         miner.animationNamePurchased = "mine";
 
-        miner.initialCost = api::from_uint64(10u);
+        miner.initialCost = api::from_uint64(8u);
         miner.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Miner");
             // TODO other effects
@@ -76,7 +111,7 @@ void StateGame::onCreate()
 
         geologist.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
         geologist.timerMax = 1.0f;
-        geologist.income = api::from_uint64(11u);
+        geologist.income = api::from_uint64(8u);
 
         purchaseInfos.push_back(geologist);
     }
@@ -97,7 +132,7 @@ void StateGame::onCreate()
 
         driller.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
         driller.timerMax = 1.0f;
-        driller.income = api::from_uint64(120u);
+        driller.income = api::from_uint64(70u);
 
         purchaseInfos.push_back(driller);
     }
@@ -118,7 +153,7 @@ void StateGame::onCreate()
 
         blastMaster.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
         blastMaster.timerMax = 1.0f;
-        blastMaster.income = api::from_uint64(2000u);
+        blastMaster.income = api::from_uint64(600u);
 
         purchaseInfos.push_back(blastMaster);
     }
@@ -136,6 +171,28 @@ void StateGame::onCreate()
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
+
+    {
+        auto btnSave = std::make_shared<jt::Button>(
+            jt::Vector2u { GP::HudButtonSize().x / 2, GP::HudButtonSize().y }, textureManager());
+        auto textSave = jt::dh::createText(renderTarget(), " Save", 16);
+        textSave->setTextAlign(jt::Text::TextAlign::LEFT);
+        btnSave->setDrawable(textSave);
+        btnSave->setPosition({ 0, GP::GetScreenSize().y - GP::HudButtonSize().y });
+        btnSave->addCallback([this]() { save(); });
+        add(btnSave);
+    }
+    {
+        auto btnLoad = std::make_shared<jt::Button>(
+            jt::Vector2u { GP::HudButtonSize().x / 2, GP::HudButtonSize().y }, textureManager());
+        auto textLoad = jt::dh::createText(renderTarget(), " Load", 16);
+        textLoad->setTextAlign(jt::Text::TextAlign::LEFT);
+        btnLoad->setDrawable(textLoad);
+        btnLoad->setPosition(
+            { GP::HudButtonSize().x / 2.0f, GP::GetScreenSize().y - GP::HudButtonSize().y });
+        btnLoad->addCallback([this]() { load("TODO"); });
+        add(btnLoad);
+    }
     m_hud = std::make_shared<Hud>();
     add(m_hud);
     // StateGame will call drawObjects itself.
@@ -154,11 +211,18 @@ void StateGame::onUpdate(float const elapsed)
 
         m_hud->getDepthScore()->notify(api::from_uint64(static_cast<std::uint64_t>(getAge())));
         m_hud->getMoneyScore()->notify(m_bank->getCurrentMoney());
-        m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerMinute());
+        m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerSecond());
 
         if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
             endGame();
+        }
+
+        if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
+            && (getGame()->input().mouse()->getMousePositionScreen().x < GP::HudMenuOffset().x)) {
+            m_bank->receiveMoney(api::from_uint64(1u));
+            getGame()->gfx().camera().shake(0.1, 3);
+            m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
         }
         m_menuBackground->update(elapsed);
 
@@ -173,6 +237,18 @@ void StateGame::onUpdate(float const elapsed)
             current = current * api::from_uint64(100);
             m_bank->receiveMoney(current);
         }
+
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)
+            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            std::cout << serialize() << std::endl;
+        }
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::L)
+            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            deserialize("{\"bank\":{\"money\":{\"value\":[3]}},\"buttons\":{\"Blaster\":{\"value\":"
+                        "[16,39]},\"Driller\":{\"value\":[232,3]},\"Geologist\":{\"value\":[100]},"
+                        "\"Miner\":{\"value\":[10]}},\"purchased\":{\"Blaster\":0,\"Driller\":0,"
+                        "\"Geologist\":0,\"Miner\":1}}");
+        }
 #endif
     }
 
@@ -182,8 +258,8 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::onDraw() const
 {
-    std::cout << m_bank->getCurrentMoney().to_string() << " "
-              << m_purchasedObjects->getInputPerMinute().to_exp_string() << std::endl;
+    //    std::cout << m_bank->getCurrentMoney().to_string() << " "
+    //              << m_purchasedObjects->getInputPerMinute().to_exp_string() << std::endl;
     m_background->draw(renderTarget());
 
     m_menuBackground->draw(renderTarget());
@@ -205,3 +281,64 @@ void StateGame::endGame()
 }
 
 std::string StateGame::getName() const { return "State Game"; }
+
+std::string StateGame::serialize() const
+{
+    nlohmann::json j;
+    std::map<std::string, api::API> buttonPrices;
+    for (auto const& btn : *m_purchaseButtons) {
+        buttonPrices[btn.lock()->getButtonName()] = btn.lock()->getPrice();
+    }
+    j["buttons"] = buttonPrices;
+    j["bank"] = *m_bank;
+    j["purchased"] = *m_purchasedObjects;
+    return j.dump();
+}
+
+void StateGame::deserialize(std::string const& str)
+{
+    nlohmann::json j = nlohmann::json::parse(str);
+    // buttons
+    std::map<std::string, api::API> buttonPrices = j["buttons"];
+    for (auto const& btn : *m_purchaseButtons) {
+        auto b = btn.lock();
+        b->setPrice(buttonPrices.at(b->getButtonName()));
+        b->hide();
+    }
+
+    // bank
+    *m_bank = j["bank"];
+
+    // purchased objects
+    m_purchasedObjects->clean();
+    auto const purchased = j["purchased"];
+    for (auto kvp : purchased.items()) {
+        for (int i = 0; i != kvp.value(); ++i) {
+            m_purchasedObjects->addObject(kvp.key());
+        }
+    }
+}
+std::string StateGame::save()
+{
+    getGame()->logger().info("Save");
+#if JT_ENABLE_WEB
+    // TODO implement
+#else
+    std::ofstream outfile { "savegame.dat" };
+    outfile << serialize() << std::endl;
+    return "";
+#endif
+}
+
+void StateGame::load(std::string const& str)
+{
+    getGame()->logger().info("Load");
+#if JT_ENABLE_WEB
+    // TODO implement
+#else
+    std::ifstream infile { "savegame.dat" };
+    std::string savedata;
+    infile >> savedata;
+    deserialize(savedata);
+#endif
+}

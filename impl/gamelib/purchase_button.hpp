@@ -14,6 +14,11 @@ class PurchaseButton : public ::jt::GameObject {
 public:
     PurchaseButton(BankInterface& finances, PurchaseInfo const& info);
 
+    api::API getPrice() const;
+    void setPrice(api::API const& price);
+    void hide();
+    std::string getButtonName() const;
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;
@@ -31,6 +36,7 @@ private:
     PurchaseInfo m_purchaseInfo;
 
     bool m_canPurchase { false };
+    bool m_hasBeenShown { false };
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP

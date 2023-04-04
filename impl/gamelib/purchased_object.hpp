@@ -9,11 +9,13 @@
 
 class PurchasedObject : public jt::GameObject {
 public:
-    PurchasedObject(BankInterface& bank, PurchaseInfo const& info);
+    PurchasedObject(BankInterface& bank, PurchaseInfo const& info, int numberOfObjects = 0);
 
     void buyOne();
 
     api::API getInputPerMinute() const;
+    int getNumberOfBoughtObjects() const;
+    void clean();
 
 private:
     void doCreate() override;

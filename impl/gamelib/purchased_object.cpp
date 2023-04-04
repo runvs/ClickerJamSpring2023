@@ -2,18 +2,22 @@
 #include "purchased_object.hpp"
 #include "bank_interface.hpp"
 #include "game_properties.hpp"
-PurchasedObject::PurchasedObject(BankInterface& bank, PurchaseInfo const& info)
+#include "random/random.hpp"
+PurchasedObject::PurchasedObject(BankInterface& bank, PurchaseInfo const& info, int numberOfObjects)
     : m_bank { bank }
     , m_info { info }
+    , m_numberOfObjects { numberOfObjects }
 {
-    m_numberOfObjects = 0;
+    m_timers.resize(m_numberOfObjects);
 }
+
 void PurchasedObject::doCreate()
 {
     m_animation = std::make_shared<jt::Animation>();
     m_animation->loadFromJson(m_info.animationFile, textureManager());
     m_animation->play(m_info.animationNamePurchased);
 }
+
 void PurchasedObject::doUpdate(float const elapsed)
 {
     m_animation->update(elapsed);
@@ -28,7 +32,6 @@ void PurchasedObject::doUpdate(float const elapsed)
 
 void PurchasedObject::doDraw() const
 {
-
     for (auto i = 0; i != m_numberOfObjects; ++i) {
         int x = i % m_info.objectsPerLine;
         int y = i / m_info.objectsPerLine;
@@ -46,11 +49,17 @@ void PurchasedObject::doDraw() const
 void PurchasedObject::buyOne()
 {
     m_numberOfObjects++;
-    m_timers.push_back(0.0f);
+    m_timers.push_back(jt::Random::getFloat(0, m_info.timerMax));
 }
 
 api::API PurchasedObject::getInputPerMinute() const
 {
     return m_info.income * api::from_uint64(m_numberOfObjects) * api::from_uint64(1000u)
         / api::from_uint64(static_cast<std::uint64_t>(m_info.timerMax) * 1000);
+}
+int PurchasedObject::getNumberOfBoughtObjects() const { return m_numberOfObjects; }
+void PurchasedObject::clean()
+{
+    m_numberOfObjects = 0;
+    m_timers.clear();
 }

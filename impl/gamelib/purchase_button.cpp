@@ -32,7 +32,9 @@ void PurchaseButton::doCreate()
         m_bank.spendMoney(m_cost);
         m_purchaseInfo.purchaseCallback(m_cost);
         // TODO move cost increase into GP
-        m_cost = m_cost * api::from_uint64(110) / api::from_uint64(100) + api::from_uint64(1);
+        m_cost = m_cost * api::from_uint64(1000 * GP::PurchaseButtonCostIncreasePercent())
+                / api::from_uint64(1000)
+            + api::from_uint64(1u);
         updateText();
     });
 
@@ -43,6 +45,18 @@ void PurchaseButton::doCreate()
 
 void PurchaseButton::doUpdate(float const elapsed)
 {
+    if (!m_hasBeenShown) {
+        api::API const showAt = m_cost
+            * api::from_uint64(
+                static_cast<std::uint64_t>(100 * GP::PurchaseButtonRevealAtPercentage()))
+            / api::from_uint64(100);
+
+        if (api::compare(m_bank.getCurrentMoney(), showAt) >= 0) {
+            m_hasBeenShown = true;
+            m_button->getBackground()->flash(0.4f, jt::colors::Green);
+            // TODO play sound
+        }
+    }
     m_button->update(elapsed);
     m_buttonText->update(elapsed);
 
@@ -63,12 +77,23 @@ void PurchaseButton::doUpdate(float const elapsed)
 
 void PurchaseButton::doDraw() const
 {
-    m_button->draw();
-    m_buttonText->draw(renderTarget());
-    m_buttonAnimation->draw(renderTarget());
+    if (m_hasBeenShown) {
+        m_button->draw();
+        m_buttonText->draw(renderTarget());
+        m_buttonAnimation->draw(renderTarget());
+    }
 }
 void PurchaseButton::updateText()
 {
     std::string const text = "    " + m_purchaseInfo.name + " " + m_cost.to_exp_string();
     m_buttonText->setText(text);
 }
+api::API PurchaseButton::getPrice() const { return m_cost; }
+
+void PurchaseButton::setPrice(api::API const& price)
+{
+    m_cost = price;
+    updateText();
+}
+std::string PurchaseButton::getButtonName() const { return m_purchaseInfo.name; }
+void PurchaseButton::hide() { m_hasBeenShown = false; }

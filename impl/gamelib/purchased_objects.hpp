@@ -14,20 +14,23 @@ public:
     PurchasedObjects(BankInterface& bank, std::vector<PurchaseInfo> const& infos);
     void addObject(std::string const& name);
 
-    api::API getInputPerMinute() const;
+    api::API getInputPerSecond() const;
+
+    // Note: Just for serialization/deserialization
+    std::map<std::string, std::shared_ptr<PurchasedObject>> getObjects() const;
+
+    void clean();
 
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
-    int m_numberOfMiners { 0 };
-
-    std::vector<float> m_minerIncomeTimers;
-    float m_minerIncomeTimerMax = 1.5f;
     BankInterface& m_bank;
     std::vector<PurchaseInfo> m_infos;
     std::map<std::string, std::shared_ptr<PurchasedObject>> m_purchasedObjects;
+
+    api::API m_inputPerSecondCached;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECTS_HPP

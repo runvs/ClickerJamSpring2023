@@ -67,6 +67,8 @@ public:
     /// Get the position of the Button
     jt::Vector2f getPosition(void) const;
 
+    std::shared_ptr<jt::DrawableInterface> getBackground();
+
 private:
     std::shared_ptr<jt::Animation> m_background { nullptr };
     std::shared_ptr<jt::Sprite> m_disabledOverlay { nullptr };

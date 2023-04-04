@@ -1,6 +1,6 @@
 #include "bank.hpp"
 
-api::API Bank::getCurrentMoney() { return m_money; }
+api::API Bank::getCurrentMoney() const { return m_money; }
 
 void Bank::spendMoney(api::API const& amount)
 {
