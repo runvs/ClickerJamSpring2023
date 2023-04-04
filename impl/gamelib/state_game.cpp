@@ -222,8 +222,8 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::onDraw() const
 {
-    std::cout << m_bank->getCurrentMoney().to_string() << " "
-              << m_purchasedObjects->getInputPerMinute().to_exp_string() << std::endl;
+    //    std::cout << m_bank->getCurrentMoney().to_string() << " "
+    //              << m_purchasedObjects->getInputPerMinute().to_exp_string() << std::endl;
     m_background->draw(renderTarget());
 
     m_menuBackground->draw(renderTarget());
