@@ -80,7 +80,7 @@ void StateGame::onCreate()
         miner.animationNameMenu = "idle";
         miner.animationNamePurchased = "mine";
 
-        miner.initialCost = api::from_uint64(10u);
+        miner.initialCost = api::from_uint64(8u);
         miner.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Miner");
             // TODO other effects
@@ -188,7 +188,7 @@ void StateGame::onUpdate(float const elapsed)
 
         m_hud->getDepthScore()->notify(api::from_uint64(static_cast<std::uint64_t>(getAge())));
         m_hud->getMoneyScore()->notify(m_bank->getCurrentMoney());
-        m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerMinute());
+        m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerSecond());
 
         if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {

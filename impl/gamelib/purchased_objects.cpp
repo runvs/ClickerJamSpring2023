@@ -36,12 +36,10 @@ void PurchasedObjects::addObject(std::string const& name)
         throw std::invalid_argument { "Invalid object in PurchasedObjects" };
     }
     m_purchasedObjects[name]->buyOne();
-}
-api::API PurchasedObjects::getInputPerMinute() const
-{
-    api::API num;
+
+    m_inputPerSecondCached = api::API {};
     for (auto const& po : m_purchasedObjects) {
-        num = num + po.second->getInputPerMinute();
+        m_inputPerSecondCached = m_inputPerSecondCached + po.second->getInputPerMinute();
     }
-    return num;
 }
+api::API PurchasedObjects::getInputPerSecond() const { return m_inputPerSecondCached; }

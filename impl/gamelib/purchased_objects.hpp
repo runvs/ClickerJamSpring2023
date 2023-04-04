@@ -14,7 +14,7 @@ public:
     PurchasedObjects(BankInterface& bank, std::vector<PurchaseInfo> const& infos);
     void addObject(std::string const& name);
 
-    api::API getInputPerMinute() const;
+    api::API getInputPerSecond() const;
 
 private:
     void doCreate() override;
@@ -28,6 +28,8 @@ private:
     BankInterface& m_bank;
     std::vector<PurchaseInfo> m_infos;
     std::map<std::string, std::shared_ptr<PurchasedObject>> m_purchasedObjects;
+
+    api::API m_inputPerSecondCached;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECTS_HPP
