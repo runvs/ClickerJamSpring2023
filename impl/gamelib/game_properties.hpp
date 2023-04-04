@@ -40,6 +40,8 @@ public:
     static jt::Vector2f HudMenuMargin();
 
     static int PurchasedNumberOfMinersPerLine();
+
+    static float PurchaseButtonRevealAtPercentage();
 };
 
 #endif

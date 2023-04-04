@@ -43,3 +43,4 @@ jt::Vector2f GP::HudMenuSize()
         GP::GetScreenSize().y };
 }
 int GP::PurchasedNumberOfMinersPerLine() { return 25; }
+float GP::PurchaseButtonRevealAtPercentage() { return 0.85f; }

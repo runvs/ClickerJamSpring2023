@@ -116,3 +116,5 @@ void jt::Button::doUpdate(float elapsed)
 }
 bool jt::Button::getActive() const { return m_isActive; }
 void jt::Button::setActive(bool isActive) { m_isActive = isActive; }
+
+std::shared_ptr<jt::DrawableInterface> jt::Button::getBackground() { return m_background; }

@@ -31,6 +31,7 @@ private:
     PurchaseInfo m_purchaseInfo;
 
     bool m_canPurchase { false };
+    bool m_hasBeenShown { false };
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP
