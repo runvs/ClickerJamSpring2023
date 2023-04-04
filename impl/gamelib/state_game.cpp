@@ -183,15 +183,23 @@ void StateGame::onCreate()
         add(btnSave);
     }
     {
-        auto btnLoad = std::make_shared<jt::Button>(
+        m_btnLoad = std::make_shared<jt::Button>(
             jt::Vector2u { GP::HudButtonSize().x / 2, GP::HudButtonSize().y }, textureManager());
         auto textLoad = jt::dh::createText(renderTarget(), " Load", 16);
         textLoad->setTextAlign(jt::Text::TextAlign::LEFT);
-        btnLoad->setDrawable(textLoad);
-        btnLoad->setPosition(
+        m_btnLoad->setDrawable(textLoad);
+        m_btnLoad->setPosition(
             { GP::HudButtonSize().x / 2.0f, GP::GetScreenSize().y - GP::HudButtonSize().y });
-        btnLoad->addCallback([this]() { load("TODO"); });
-        add(btnLoad);
+        m_btnLoad->addCallback([this]() { load("TODO"); });
+        add(m_btnLoad);
+#if JT_ENABLE_WEB
+        // TODO
+#else
+        std::ifstream infile { "savegame.dat" };
+        if (!infile.good()) {
+            m_btnLoad->setActive(false);
+        }
+#endif
     }
     m_hud = std::make_shared<Hud>();
     add(m_hud);
@@ -326,6 +334,7 @@ std::string StateGame::save()
 #else
     std::ofstream outfile { "savegame.dat" };
     outfile << serialize() << std::endl;
+    m_btnLoad->setActive(true);
     return "";
 #endif
 }
