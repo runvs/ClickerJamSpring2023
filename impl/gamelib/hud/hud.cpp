@@ -33,7 +33,8 @@ void Hud::doCreate()
     m_moneyPerSecondText = jt::dh::createText(renderTarget(), "", 16, jt::Color { 255, 215, 0 });
     m_moneyPerSecondText->setTextAlign(jt::Text::TextAlign::LEFT);
     m_moneyPerSecondText->setPosition({ 10, 18 });
-    m_moneyPerSecondDisplay = std::make_shared<MoneyDisplay>(m_moneyPerSecondText, "CPS: ", "$/s");
+    m_moneyPerSecondDisplay
+        = std::make_shared<MoneyDisplay>(m_moneyPerSecondText, "Income: ", "$/s");
 }
 
 void Hud::doUpdate(float const elapsed)

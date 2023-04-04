@@ -171,6 +171,28 @@ void StateGame::onCreate()
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
+
+    {
+        auto btnSave = std::make_shared<jt::Button>(
+            jt::Vector2u { GP::HudButtonSize().x / 2, GP::HudButtonSize().y }, textureManager());
+        auto textSave = jt::dh::createText(renderTarget(), " Save", 16);
+        textSave->setTextAlign(jt::Text::TextAlign::LEFT);
+        btnSave->setDrawable(textSave);
+        btnSave->setPosition({ 0, GP::GetScreenSize().y - GP::HudButtonSize().y });
+        btnSave->addCallback([this]() { save(); });
+        add(btnSave);
+    }
+    {
+        auto btnLoad = std::make_shared<jt::Button>(
+            jt::Vector2u { GP::HudButtonSize().x / 2, GP::HudButtonSize().y }, textureManager());
+        auto textLoad = jt::dh::createText(renderTarget(), " Load", 16);
+        textLoad->setTextAlign(jt::Text::TextAlign::LEFT);
+        btnLoad->setDrawable(textLoad);
+        btnLoad->setPosition(
+            { GP::HudButtonSize().x / 2.0f, GP::GetScreenSize().y - GP::HudButtonSize().y });
+        btnLoad->addCallback([this]() { load("TODO"); });
+        add(btnLoad);
+    }
     m_hud = std::make_shared<Hud>();
     add(m_hud);
     // StateGame will call drawObjects itself.
@@ -295,4 +317,28 @@ void StateGame::deserialize(std::string const& str)
             m_purchasedObjects->addObject(kvp.key());
         }
     }
+}
+std::string StateGame::save()
+{
+    getGame()->logger().info("Save");
+#if JT_ENABLE_WEB
+    // TODO implement
+#else
+    std::ofstream outfile { "savegame.dat" };
+    outfile << serialize() << std::endl;
+    return "";
+#endif
+}
+
+void StateGame::load(std::string const& str)
+{
+    getGame()->logger().info("Load");
+#if JT_ENABLE_WEB
+    // TODO implement
+#else
+    std::ifstream infile { "savegame.dat" };
+    std::string savedata;
+    infile >> savedata;
+    deserialize(savedata);
+#endif
 }

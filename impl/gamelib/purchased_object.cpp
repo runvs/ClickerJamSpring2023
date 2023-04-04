@@ -2,6 +2,7 @@
 #include "purchased_object.hpp"
 #include "bank_interface.hpp"
 #include "game_properties.hpp"
+#include "random/random.hpp"
 PurchasedObject::PurchasedObject(BankInterface& bank, PurchaseInfo const& info, int numberOfObjects)
     : m_bank { bank }
     , m_info { info }
@@ -48,7 +49,7 @@ void PurchasedObject::doDraw() const
 void PurchasedObject::buyOne()
 {
     m_numberOfObjects++;
-    m_timers.push_back(0.0f);
+    m_timers.push_back(jt::Random::getFloat(0, m_info.timerMax));
 }
 
 api::API PurchasedObject::getInputPerMinute() const

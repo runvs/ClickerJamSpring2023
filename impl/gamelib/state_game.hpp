@@ -32,6 +32,9 @@ public:
     std::string serialize() const;
     void deserialize(std::string const&);
 
+    std::string save();
+    void load(std::string const& str);
+
 private:
     std::shared_ptr<jt::Shape> m_background;
     std::shared_ptr<jt::Vignette> m_vignette;
@@ -48,9 +51,6 @@ private:
 
     bool m_running { true };
     bool m_hasEnded { false };
-
-    int m_scoreP1 { 0 };
-    int m_scoreP2 { 0 };
 
     api::API m_money;
 
