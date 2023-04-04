@@ -18,7 +18,7 @@ void MineShaftArea::doCreate()
     m_background_shape->setColor(jt::colors::Black);
     m_background_shape->update(1.0f);
 
-    for (auto i = 0u; i != m_rock_layers.size(); i++) {
+    for (auto i = 0u; i != m_rock_layers.capacity(); i++) {
         auto layer = std::make_shared<RockLayer>(
             jt::Random::getInt(1, i + 2), jt::Random::getRandomColor(), static_cast<float>(i));
         m_rock_layers[i] = (layer);
