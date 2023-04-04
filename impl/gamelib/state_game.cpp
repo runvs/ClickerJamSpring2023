@@ -352,9 +352,16 @@ void StateGame::load(std::string const& str)
     getGame()->logger().info("Load");
 #if JT_ENABLE_WEB
     auto const savedata = emscripten_run_script_string("load()");
+    if (savedata == "") {
+        return;
+    }
     deserialize(savedata);
 #else
     std::ifstream infile { "savegame.dat" };
+    if (!infile.good())
+    {
+        return;
+    }
     std::string savedata;
     infile >> savedata;
     deserialize(savedata);
