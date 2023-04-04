@@ -4,6 +4,7 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
+#include <random/random.hpp>
 
 MineShaftArea::MineShaftArea(std::function<void(const api::API&)> callback)
     : m_callback { callback }
@@ -11,11 +12,19 @@ MineShaftArea::MineShaftArea(std::function<void(const api::API&)> callback)
 }
 void MineShaftArea::doCreate()
 {
-    m_shape = std::make_shared<jt::Shape>();
-    m_shape->makeRect(GP::HudMineShaftSize(), textureManager());
-    m_shape->setOffset(GP::HudMineShaftOffset());
-    m_shape->setColor(jt::colors::Black);
-    m_shape->update(1.0f);
+    m_background_shape = std::make_shared<jt::Shape>();
+    m_background_shape->makeRect(GP::HudMineShaftSize(), textureManager());
+    m_background_shape->setPosition(GP::HudMineShaftOffset());
+    m_background_shape->setColor(jt::colors::Black);
+    m_background_shape->update(1.0f);
+
+    for (auto i = 0u; i != m_rock_layers.size(); i++) {
+        auto layer = std::make_shared<RockLayer>(
+            jt::Random::getInt(1, i + 2), jt::Random::getRandomColor(), static_cast<float>(i));
+        m_rock_layers[i] = (layer);
+        layer->setGameInstance(getGame());
+        layer->create();
+    }
 }
 void MineShaftArea::doUpdate(const float elapsed)
 {
@@ -25,5 +34,21 @@ void MineShaftArea::doUpdate(const float elapsed)
             getGame()->input().mouse()->getMousePositionScreen()))) {
         m_callback(api::from_uint64(5u));
     }
+    for (auto& layer : m_rock_layers) {
+        if (layer == nullptr) {
+            continue;
+        }
+        layer->update(elapsed);
+    }
 }
-void MineShaftArea::doDraw() const { m_shape->draw(renderTarget()); }
+void MineShaftArea::doDraw() const
+{
+    m_background_shape->draw(renderTarget());
+    for (auto const& layer : m_rock_layers) {
+        if (layer == nullptr) {
+            std::cout << "skip layer" << std::endl;
+            continue;
+        }
+        layer->draw();
+    }
+}

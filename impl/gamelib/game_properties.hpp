@@ -45,6 +45,7 @@ public:
 
     static float PurchaseButtonRevealAtPercentage();
     static float PurchaseButtonCostIncreasePercent();
+    static float HudMineShaftLayerHeight();
 };
 
 #endif
