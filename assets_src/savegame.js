@@ -1,6 +1,6 @@
 function save(data) {
     console.log('Saving game data...');
-    localStorage.setItem('SaveGame', data.toString());
+    localStorage.setItem('SaveGame', JSON.stringify(data));
 }
 
 function load() {
