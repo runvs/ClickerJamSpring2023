@@ -8,6 +8,7 @@
 #include <circular_buffer.hpp>
 #include <color/color.hpp>
 #include <game_object.hpp>
+#include <game_properties.hpp>
 #include <sprite.hpp>
 
 class MineShaftArea : public jt::GameObject {
@@ -21,7 +22,7 @@ private:
 
     std::function<void(api::API const&)> m_callback;
     std::shared_ptr<jt::Shape> m_background_shape;
-    mutable jt::CircularBuffer<std::shared_ptr<RockLayer>, 16> m_rock_layers;
+    mutable jt::CircularBuffer<std::shared_ptr<RockLayer>, 17> m_rock_layers;
 };
 
 #endif // CLICKERJAMSPRING2023_MINE_SHAFT_AREA_HPP

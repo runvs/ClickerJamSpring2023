@@ -18,9 +18,23 @@ void MineShaftArea::doCreate()
     m_background_shape->setColor(jt::colors::Black);
     m_background_shape->update(1.0f);
 
+    std::uint8_t active_layer_index = m_rock_layers.capacity() / 2;
+    std::cout << "active layer index: " << active_layer_index << std::endl;
     for (auto i = 0u; i != m_rock_layers.capacity(); i++) {
+        jt::Color color;
+        if (i < active_layer_index) {
+            std::uint8_t offset = 5u * i;
+            std::uint8_t r = (10u + offset) % 255;
+            std::uint8_t g = (10u + offset) % 255;
+            std::uint8_t b = (100u + offset) % 255;
+            color = jt::Color { r, g, b };
+        } else if (i > active_layer_index) {
+            color = jt::Random::getRandomColor();
+        } else {
+            color = jt::Color { 112u, 128u, 144u };
+        }
         auto layer = std::make_shared<RockLayer>(
-            jt::Random::getInt(1, i + 2), jt::Random::getRandomColor(), static_cast<float>(i));
+            jt::Random::getInt(1, i + 2), color, static_cast<float>(i));
         m_rock_layers[i] = (layer);
         layer->setGameInstance(getGame());
         layer->create();
@@ -29,8 +43,9 @@ void MineShaftArea::doCreate()
 void MineShaftArea::doUpdate(const float elapsed)
 {
     if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
-        && (jt::MathHelper::checkIsIn({ GP::HudMineShaftOffset().x, GP::HudMineShaftOffset().y,
-                                          GP::HudMineShaftSize().x, GP::HudMineShaftSize().y },
+        && (jt::MathHelper::checkIsIn(
+            { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+                GP::HudMineShaftActiveLayerSize().x, GP::HudMineShaftActiveLayerSize().y },
             getGame()->input().mouse()->getMousePositionScreen()))) {
         m_callback(api::from_uint64(5u));
     }

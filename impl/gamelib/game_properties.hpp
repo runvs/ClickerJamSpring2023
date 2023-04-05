@@ -40,6 +40,8 @@ public:
     static jt::Vector2f HudMenuMargin();
     static jt::Vector2f HudMineShaftSize();
     static jt::Vector2f HudMineShaftOffset();
+    static jt::Vector2f HudMineShaftActiveLayerOffset();
+    static jt::Vector2f HudMineShaftActiveLayerSize();
 
     static int PurchasedNumberOfObjectsPerLine();
 

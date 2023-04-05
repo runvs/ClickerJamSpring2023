@@ -44,12 +44,22 @@ jt::Vector2f GP::HudMenuSize()
 }
 jt::Vector2f GP::HudMineShaftOffset()
 {
-    return jt::Vector2f { GetScreenSize().x / 3.0f * 1.0f, 0.0f };
+    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)), 0.0f };
 };
 jt::Vector2f GP::HudMineShaftSize()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
         GP::GetScreenSize().y };
+};
+jt::Vector2f GP::HudMineShaftActiveLayerOffset()
+{
+    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)),
+        static_cast<float>(static_cast<int>(GetScreenSize().y / 17.0f * 8.0f)) };
+};
+jt::Vector2f GP::HudMineShaftActiveLayerSize()
+{
+    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
+        static_cast<float>(static_cast<int>(GetScreenSize().y / 17.0f)) + 1.0f };
 };
 
 int GP::PurchasedNumberOfObjectsPerLine() { return 12; }
