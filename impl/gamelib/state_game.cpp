@@ -34,12 +34,14 @@ void StateGame::onCreate()
     m_background->setIgnoreCamMovement(true);
     m_background->update(0.0f);
 
-    m_mine_shaft_area = std::make_shared<MineShaftArea>([this](api::API const& value) {
-        m_bank->receiveMoney(value);
-        getGame()->gfx().camera().shake(0.1f, 3.0f);
-        m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
-        m_digSound->play();
-    });
+    m_mine_shaft_model = std::make_shared<MineShaftModel>();
+    m_mine_shaft_area
+        = std::make_shared<MineShaftArea>(*m_mine_shaft_model.get(), [this](api::API const& value) {
+              m_bank->receiveMoney(value);
+              getGame()->gfx().camera().shake(0.1f, 3.0f);
+              m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
+              m_digSound->play();
+          });
     add(m_mine_shaft_area);
 
     createPlayer();
@@ -61,7 +63,7 @@ void StateGame::onCreate()
 
             auto twa = jt::TweenAlpha::create(shape, 0.2f, 255, 0);
             twa->setStartDelay(0.1f);
-            twa->addCompleteCallback([shape](){shape->setPosition({ -5000, -5000 });});
+            twa->addCompleteCallback([shape]() { shape->setPosition({ -5000, -5000 }); });
             add(twa);
 
             std::shared_ptr<jt::Tween> twc1
@@ -219,9 +221,8 @@ void StateGame::onCreate()
     setAutoDraw(false);
 
     std::vector<std::shared_ptr<jt::SoundInterface>> soundGroupSounds {};
-    for (auto i = 0; i != 6; ++i)
-    {
-        std::string const fileName = "assets/sfx/dig"+std::to_string(i)+".wav";
+    for (auto i = 0; i != 6; ++i) {
+        std::string const fileName = "assets/sfx/dig" + std::to_string(i) + ".wav";
         auto snd = getGame()->audio().addTemporarySound(fileName);
         snd->setVolume(0.6f);
         soundGroupSounds.push_back(snd);
@@ -238,7 +239,7 @@ void StateGame::onUpdate(float const elapsed)
     if (m_running) {
         // update game logic here
 
-        m_hud->getDepthScore()->notify(api::from_uint64(static_cast<std::uint64_t>(getAge())));
+        m_hud->getDepthScore()->notify(m_mine_shaft_model->getCurrentDepth());
         m_hud->getMoneyScore()->notify(m_bank->getCurrentMoney());
         m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerSecond());
 

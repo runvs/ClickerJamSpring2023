@@ -5,6 +5,7 @@
 #include "bank_interface.hpp"
 #include "button.hpp"
 #include "mineshaft/mine_shaft_area.hpp"
+#include "mineshaft/mine_shaft_model.hpp"
 #include "object_group.hpp"
 #include "purchase_button.hpp"
 #include "purchased_objects.hpp"
@@ -46,6 +47,7 @@ private:
 
     std::shared_ptr<jt::ObjectGroup<PurchaseButton>> m_purchaseButtons;
     std::shared_ptr<Bank> m_bank;
+    std::shared_ptr<MineShaftModel> m_mine_shaft_model;
     std::shared_ptr<PurchasedObjects> m_purchasedObjects;
 
     std::shared_ptr<jt::ParticleSystem<jt::Shape, 100>> m_sparks;

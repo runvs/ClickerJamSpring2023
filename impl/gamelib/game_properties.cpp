@@ -56,7 +56,7 @@ jt::Vector2f GP::HudMineShaftActiveLayerOffset()
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)),
         static_cast<float>(static_cast<int>(GetScreenSize().y / 17.0f * 8.0f)) };
 };
-jt::Vector2f GP::HudMineShaftActiveLayerSize()
+jt::Vector2f GP::HudMineShaftLayerSize()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
         static_cast<float>(static_cast<int>(GetScreenSize().y / 17.0f)) + 1.0f };
@@ -65,5 +65,4 @@ jt::Vector2f GP::HudMineShaftActiveLayerSize()
 int GP::PurchasedNumberOfObjectsPerLine() { return 12; }
 float GP::PurchaseButtonRevealAtPercentage() { return 0.85f; }
 float GP::PurchaseButtonCostIncreasePercent() { return 1.2f; }
-float GP::HudMineShaftLayerHeight() { return 16.0f; }
 int GP::PurchasedMaxNumberOfLines() { return 4; }

@@ -10,7 +10,7 @@
 
 class RockLayer : public jt::GameObject {
 public:
-    RockLayer(const int hardness, const jt::Color color, const float initial_layer_offset = 0.0f);
+    RockLayer(const int hardness, const jt::Color color, const float initial_layer_offset);
 
     void progressAmount(int progress);
 

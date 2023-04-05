@@ -6,8 +6,9 @@
 #include <math_helper.hpp>
 #include <random/random.hpp>
 
-MineShaftArea::MineShaftArea(std::function<void(const api::API&)> callback)
-    : m_callback { callback }
+MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback)
+    : m_mine_shaft_model { model }
+    , m_callback { callback }
 {
 }
 void MineShaftArea::doCreate()
@@ -19,7 +20,6 @@ void MineShaftArea::doCreate()
     m_background_shape->update(1.0f);
 
     std::uint8_t active_layer_index = m_rock_layers.capacity() / 2;
-    std::cout << "active layer index: " << active_layer_index << std::endl;
     for (auto i = 0u; i != m_rock_layers.capacity(); i++) {
         jt::Color color;
         if (i < active_layer_index) {
@@ -56,7 +56,6 @@ void MineShaftArea::doDraw() const
     m_background_shape->draw(renderTarget());
     for (auto const& layer : m_rock_layers) {
         if (layer == nullptr) {
-            std::cout << "skip layer" << std::endl;
             continue;
         }
         layer->draw();
@@ -67,8 +66,35 @@ void MineShaftArea::handleMouseClicks()
     if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
         && (jt::MathHelper::checkIsIn(
             { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
-                GP::HudMineShaftActiveLayerSize().x, GP::HudMineShaftActiveLayerSize().y },
+                GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
             getGame()->input().mouse()->getMousePositionScreen()))) {
         m_callback(api::from_uint64(5u));
+        auto active_layer = getActiveLayer();
+        active_layer->progressAmount(1);
+        if (active_layer->isMined()) {
+            // TODO: add animation + sound for braking layer (flash?)
+            cycleLayers();
+        }
     }
+}
+
+std::shared_ptr<RockLayer> MineShaftArea::getActiveLayer()
+{
+    return m_rock_layers[(m_rock_layers.getTail() + 8) % 17];
+};
+
+void MineShaftArea::cycleLayers()
+{
+    for (auto& layer : m_rock_layers) {
+        if (layer == nullptr) {
+            continue;
+        }
+        layer->ascend();
+    }
+    auto new_layer = std::make_shared<RockLayer>(
+        jt::Random::getInt(1, m_mine_shaft_model.getNumberOfMinedLayers() + 5),
+        jt::Random::getRandomColor(), 17.0f);
+    new_layer->setGameInstance(getGame());
+    new_layer->create();
+    m_rock_layers.put(new_layer);
 }
