@@ -42,13 +42,8 @@ void MineShaftArea::doCreate()
 }
 void MineShaftArea::doUpdate(const float elapsed)
 {
-    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
-        && (jt::MathHelper::checkIsIn(
-            { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
-                GP::HudMineShaftActiveLayerSize().x, GP::HudMineShaftActiveLayerSize().y },
-            getGame()->input().mouse()->getMousePositionScreen()))) {
-        m_callback(api::from_uint64(5u));
-    }
+    handleMouseClicks();
+
     for (auto& layer : m_rock_layers) {
         if (layer == nullptr) {
             continue;
@@ -65,5 +60,15 @@ void MineShaftArea::doDraw() const
             continue;
         }
         layer->draw();
+    }
+}
+void MineShaftArea::handleMouseClicks()
+{
+    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
+        && (jt::MathHelper::checkIsIn(
+            { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+                GP::HudMineShaftActiveLayerSize().x, GP::HudMineShaftActiveLayerSize().y },
+            getGame()->input().mouse()->getMousePositionScreen()))) {
+        m_callback(api::from_uint64(5u));
     }
 }

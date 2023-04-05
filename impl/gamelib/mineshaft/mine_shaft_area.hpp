@@ -23,6 +23,8 @@ private:
     std::function<void(api::API const&)> m_callback;
     std::shared_ptr<jt::Shape> m_background_shape;
     mutable jt::CircularBuffer<std::shared_ptr<RockLayer>, 17> m_rock_layers;
+
+    void handleMouseClicks();
 };
 
 #endif // CLICKERJAMSPRING2023_MINE_SHAFT_AREA_HPP
