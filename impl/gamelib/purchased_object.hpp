@@ -5,6 +5,7 @@
 #include <bank_interface.hpp>
 #include <game_object.hpp>
 #include <purchase_info.hpp>
+#include <text.hpp>
 #include <vector>
 
 class PurchasedObject : public jt::GameObject {
@@ -28,6 +29,10 @@ private:
     int m_numberOfObjects;
 
     mutable std::shared_ptr<jt::Animation> m_animation;
+    std::shared_ptr<jt::Text> m_text;
+
+    jt::Vector2f m_baseOffset;
+
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECT_HPP

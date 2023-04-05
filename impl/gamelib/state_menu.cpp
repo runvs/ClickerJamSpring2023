@@ -8,6 +8,7 @@
 #include <lerp.hpp>
 #include <log/license_info.hpp>
 #include <math_helper.hpp>
+#include <oalpp/effects/utility/gain.hpp>
 #include <screeneffects/vignette.hpp>
 #include <shape.hpp>
 #include <sprite.hpp>
@@ -20,7 +21,6 @@
 #include <tweens/tween_scale.hpp>
 #include <algorithm>
 #include <iostream>
-#include <oalpp/effects/utility/gain.hpp>
 
 void StateMenu::onCreate()
 {
@@ -33,11 +33,13 @@ void StateMenu::onCreate()
     getGame()->stateManager().setTransition(std::make_shared<jt::StateManagerTransitionFadeToBlack>(
         GP::GetScreenSize(), textureManager()));
 
-    oalpp::effects::utility::Gain gain{1.0f};
-    auto bgm = getGame()->audio().addPermanentSound("bgm", "assets/cjs2023_ost_intro.ogg", "assets/cjs2023_ost_loop.ogg", gain);
-    bgm->setVolume(0.5f);
-    bgm->play();
-
+    oalpp::effects::utility::Gain gain { 1.0f };
+    if (getGame()->audio().getPermanentSound("bgm") == nullptr) {
+        auto bgm = getGame()->audio().addPermanentSound(
+            "bgm", "assets/cjs2023_ost_intro.ogg", "assets/cjs2023_ost_loop.ogg", gain);
+        bgm->setVolume(0.5f);
+        bgm->play();
+    }
 }
 
 void StateMenu::onEnter()

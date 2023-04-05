@@ -20,19 +20,19 @@ void Hud::doCreate()
     m_depthText = std::make_shared<jt::Text>();
     m_depthText = jt::dh::createText(renderTarget(), "", 16, jt::Color { 192, 194, 201 });
     m_depthText->setTextAlign(jt::Text::TextAlign::RIGHT);
-    m_depthText->setPosition({ GP::HudMenuOffset().x - 40.0f, 2.0f });
+    m_depthText->setPosition({ GP::HudMenuOffset().x - 40.0f, -2.0f });
     m_depthDisplay = std::make_shared<DepthDisplay>(m_depthText, "Depth: -");
 
     m_moneyText = std::make_shared<jt::Text>();
     m_moneyText = jt::dh::createText(renderTarget(), "", 16, jt::Color { 255, 215, 0 });
     m_moneyText->setTextAlign(jt::Text::TextAlign::LEFT);
-    m_moneyText->setPosition({ 10, 2.0f });
+    m_moneyText->setPosition({ 10, -2.0f });
     m_moneyDisplay = std::make_shared<MoneyDisplay>(m_moneyText, "Coins: $");
 
     m_moneyPerSecondText = std::make_shared<jt::Text>();
     m_moneyPerSecondText = jt::dh::createText(renderTarget(), "", 16, jt::Color { 255, 215, 0 });
     m_moneyPerSecondText->setTextAlign(jt::Text::TextAlign::LEFT);
-    m_moneyPerSecondText->setPosition({ 10, 18 });
+    m_moneyPerSecondText->setPosition({ 10.0f, 14.0f });
     m_moneyPerSecondDisplay
         = std::make_shared<MoneyDisplay>(m_moneyPerSecondText, "Income: ", "$/s");
 }
