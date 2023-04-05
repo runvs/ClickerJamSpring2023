@@ -39,7 +39,7 @@ void PurchasedObjects::addObject(std::string const& name)
 
     m_inputPerSecondCached = api::API {};
     for (auto const& po : m_purchasedObjects) {
-        m_inputPerSecondCached = m_inputPerSecondCached + po.second->getInputPerMinute();
+        m_inputPerSecondCached = m_inputPerSecondCached + po.second->getInputPerSecond();
     }
 }
 api::API PurchasedObjects::getInputPerSecond() const { return m_inputPerSecondCached; }

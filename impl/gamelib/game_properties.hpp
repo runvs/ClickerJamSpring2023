@@ -41,7 +41,7 @@ public:
     static jt::Vector2f HudMineShaftSize();
     static jt::Vector2f HudMineShaftOffset();
 
-    static int PurchasedNumberOfMinersPerLine();
+    static int PurchasedNumberOfObjectsPerLine();
 
     static float PurchaseButtonRevealAtPercentage();
     static float PurchaseButtonCostIncreasePercent();

@@ -14,7 +14,7 @@ public:
 
     void buyOne();
 
-    api::API getInputPerMinute() const;
+    api::API getInputPerSecond() const;
     int getNumberOfBoughtObjects() const;
     void clean();
 
@@ -32,7 +32,8 @@ private:
     std::shared_ptr<jt::Text> m_text;
 
     jt::Vector2f m_baseOffset;
-
+    jt::Rectf m_rect;
+    api::API m_incomePerSecond;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECT_HPP

@@ -98,7 +98,7 @@ void StateGame::onCreate()
             // Note: No need to remove money from bank, button already takes care of this
         };
 
-        miner.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        miner.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         miner.timerMax = 1.0f;
         miner.income = api::from_uint64(1u);
 
@@ -119,7 +119,7 @@ void StateGame::onCreate()
             // Note: No need to remove money from bank, button already takes care of this
         };
 
-        geologist.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        geologist.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         geologist.timerMax = 1.0f;
         geologist.income = api::from_uint64(8u);
 
@@ -140,7 +140,7 @@ void StateGame::onCreate()
             // Note: No need to remove money from bank, button already takes care of this
         };
 
-        driller.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        driller.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         driller.timerMax = 1.0f;
         driller.income = api::from_uint64(70u);
 
@@ -161,7 +161,7 @@ void StateGame::onCreate()
             // Note: No need to remove money from bank, button already takes care of this
         };
 
-        blastMaster.objectsPerLine = GP::PurchasedNumberOfMinersPerLine();
+        blastMaster.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         blastMaster.timerMax = 1.0f;
         blastMaster.income = api::from_uint64(600u);
 

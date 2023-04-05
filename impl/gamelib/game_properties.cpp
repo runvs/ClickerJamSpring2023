@@ -52,7 +52,7 @@ jt::Vector2f GP::HudMineShaftSize()
         GP::GetScreenSize().y };
 };
 
-int GP::PurchasedNumberOfMinersPerLine() { return 12; }
+int GP::PurchasedNumberOfObjectsPerLine() { return 12; }
 float GP::PurchaseButtonRevealAtPercentage() { return 0.85f; }
 float GP::PurchaseButtonCostIncreasePercent() { return 1.2f; }
 float GP::HudMineShaftLayerHeight() { return 16.0f; }
