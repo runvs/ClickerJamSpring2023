@@ -93,7 +93,7 @@ void MineShaftArea::cycleLayers()
     }
     auto new_layer = std::make_shared<RockLayer>(
         jt::Random::getInt(1, m_mine_shaft_model.getNumberOfMinedLayers() + 5),
-        jt::Random::getRandomColor(), 17.0f);
+        jt::Random::getRandomColor(), 16.0f);
     new_layer->setGameInstance(getGame());
     new_layer->create();
     m_rock_layers.put(new_layer);

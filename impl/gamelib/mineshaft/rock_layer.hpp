@@ -25,7 +25,10 @@ private:
     int m_hardness;
     int m_progress;
     float m_layer_offset;
-    std::shared_ptr<jt::Shape> m_shape;
+
+    std::shared_ptr<jt::Shape> m_shape_left;
+    std::shared_ptr<jt::Shape> m_shape_middle;
+    std::shared_ptr<jt::Shape> m_shape_right;
 
     std::function<void(api::API const&)> m_callback;
 
