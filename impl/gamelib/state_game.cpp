@@ -14,7 +14,6 @@
 #include <tweens/tween_color.hpp>
 #include <tweens/tween_position.hpp>
 
-
 #ifdef JT_ENABLE_WEB
 #include <cstring>
 #include <emscripten.h>
@@ -236,12 +235,6 @@ void StateGame::onUpdate(float const elapsed)
             endGame();
         }
 
-        //        if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
-        //            && (getGame()->input().mouse()->getMousePositionScreen().x <
-        //            GP::HudMenuOffset().x)) { m_bank->receiveMoney(api::from_uint64(1u));
-        //            getGame()->gfx().camera().shake(0.1, 3);
-        //            m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
-        //        }
         m_menuBackground->update(elapsed);
 
 #if JT_ENABLE_DEBUG
@@ -255,18 +248,6 @@ void StateGame::onUpdate(float const elapsed)
             current = current * api::from_uint64(100);
             m_bank->receiveMoney(current);
         }
-
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)
-            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
-            std::cout << serialize() << std::endl;
-        }
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::L)
-            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
-            deserialize("{\"bank\":{\"money\":{\"value\":[3]}},\"buttons\":{\"Blaster\":{\"value\":"
-                        "[16,39]},\"Driller\":{\"value\":[232,3]},\"Geologist\":{\"value\":[100]},"
-                        "\"Miner\":{\"value\":[10]}},\"purchased\":{\"Blaster\":0,\"Driller\":0,"
-                        "\"Geologist\":0,\"Miner\":1}}");
-        }
 #endif
     }
 
@@ -276,8 +257,6 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::onDraw() const
 {
-    //    std::cout << m_bank->getCurrentMoney().to_string() << " "
-    //              << m_purchasedObjects->getInputPerMinute().to_exp_string() << std::endl;
     m_background->draw(renderTarget());
 
     m_menuBackground->draw(renderTarget());
@@ -304,9 +283,10 @@ std::string StateGame::getName() const { return "State Game"; }
 std::string StateGame::serialize() const
 {
     nlohmann::json j;
-    std::map<std::string, api::API> buttonPrices;
+    std::map<std::string, std::pair<api::API, bool>> buttonPrices;
     for (auto const& btn : *m_purchaseButtons) {
-        buttonPrices[btn.lock()->getButtonName()] = btn.lock()->getPrice();
+        buttonPrices[btn.lock()->getButtonName()]
+            = std::make_pair(btn.lock()->getPrice(), btn.lock()->wasVisible());
     }
     j["buttons"] = buttonPrices;
     j["bank"] = *m_bank;
@@ -318,11 +298,11 @@ void StateGame::deserialize(std::string const& str)
 {
     nlohmann::json j = nlohmann::json::parse(str);
     // buttons
-    std::map<std::string, api::API> buttonPrices = j["buttons"];
+    std::map<std::string, std::pair<api::API, bool>> buttonPrices = j["buttons"];
     for (auto const& btn : *m_purchaseButtons) {
         auto b = btn.lock();
-        b->setPrice(buttonPrices.at(b->getButtonName()));
-        b->hide();
+        b->setPrice(buttonPrices.at(b->getButtonName()).first);
+        b->setVisible(buttonPrices.at(b->getButtonName()).second);
     }
 
     // bank
@@ -358,11 +338,11 @@ void StateGame::load(std::string const& str)
 {
     getGame()->logger().info("Load");
 #if JT_ENABLE_WEB
-//    std::cout << "pre load\n";
+    //    std::cout << "pre load\n";
     auto const savedata = emscripten_run_script_string("load()");
     std::cout << "savedata: '" << savedata << "'" << std::endl;
-//    std::cout << "post load\n";
-    if (strcmp("",savedata) == 0) {
+    //    std::cout << "post load\n";
+    if (strcmp("", savedata) == 0) {
         getGame()->logger().warning("empty savedata");
         return;
     }
@@ -371,8 +351,7 @@ void StateGame::load(std::string const& str)
 //    std::cout << "post deserialize\n";
 #else
     std::ifstream infile { "savegame.dat" };
-    if (!infile.good())
-    {
+    if (!infile.good()) {
         getGame()->logger().warning("empty savedata");
         return;
     }

@@ -97,3 +97,5 @@ void PurchaseButton::setPrice(api::API const& price)
 }
 std::string PurchaseButton::getButtonName() const { return m_purchaseInfo.name; }
 void PurchaseButton::hide() { m_hasBeenShown = false; }
+bool PurchaseButton::wasVisible() const { return m_hasBeenShown; }
+void PurchaseButton::setVisible(bool visible) { m_hasBeenShown = visible; }

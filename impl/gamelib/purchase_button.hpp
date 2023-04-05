@@ -18,6 +18,8 @@ public:
     void setPrice(api::API const& price);
     void hide();
     std::string getButtonName() const;
+    bool wasVisible() const;
+    void setVisible(bool visible);
 
 private:
     void doCreate() override;
