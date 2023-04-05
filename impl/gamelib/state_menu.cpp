@@ -111,9 +111,8 @@ void StateMenu::createTextStart()
 void StateMenu::createTextTitle()
 {
     float half_width = GP::GetScreenSize().x / 2;
-    m_textTitle = jt::dh::createText(renderTarget(), GP::GameName(), 48U, GP::PaletteFontFront());
-    m_textTitle->setPosition({ half_width, 5.0f });
-    m_textTitle->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 4, 4 });
+    m_logo = std::make_shared<jt::Sprite>("assets/logo.png", textureManager());
+    m_logo->setPosition({ half_width - 137.0f / 2.0f, 5.0f });
 }
 
 void StateMenu::createTweens()
@@ -162,7 +161,7 @@ void StateMenu::createTweenExplanation()
 
 void StateMenu::createTweenTitleAlpha()
 {
-    auto tween = jt::TweenAlpha::create(m_textTitle, 0.55f, 0, 255);
+    auto tween = jt::TweenAlpha::create(m_logo, 0.55f, 0, 255);
     tween->setStartDelay(0.2f);
     tween->setSkipFrames();
     add(tween);
@@ -204,7 +203,7 @@ void StateMenu::onUpdate(float const elapsed)
 void StateMenu::updateDrawables(const float& elapsed)
 {
     m_background->update(elapsed);
-    m_textTitle->update(elapsed);
+    m_logo->update(elapsed);
     m_textStart->update(elapsed);
     m_textExplanation->update(elapsed);
     m_textCredits->update(elapsed);
@@ -236,7 +235,7 @@ void StateMenu::onDraw() const
 {
     m_background->draw(renderTarget());
 
-    m_textTitle->draw(renderTarget());
+    m_logo->draw(renderTarget());
     m_textStart->draw(renderTarget());
     m_textExplanation->draw(renderTarget());
     m_textCredits->draw(renderTarget());

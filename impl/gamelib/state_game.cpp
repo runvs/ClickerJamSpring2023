@@ -153,10 +153,9 @@ void StateGame::onCreate()
     {
         PurchaseInfo blastMaster;
         blastMaster.name = "Blaster";
-
-        blastMaster.animationFile = "assets/human/MiniArcherMan.json";
+        blastMaster.animationFile = "assets/human/blaster.json";
         blastMaster.animationNameMenu = "idle";
-        blastMaster.animationNamePurchased = "attack";
+        blastMaster.animationNamePurchased = "mine";
 
         blastMaster.initialCost = api::from_uint64(10000u);
         blastMaster.purchaseCallback = [this](api::API const& /*cost*/) {
