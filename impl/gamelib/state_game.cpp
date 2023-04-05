@@ -36,7 +36,7 @@ void StateGame::onCreate()
 
     m_mine_shaft_area = std::make_shared<MineShaftArea>([this](api::API const& value) {
         m_bank->receiveMoney(value);
-        getGame()->gfx().camera().shake(0.1, 3);
+        getGame()->gfx().camera().shake(0.1f, 3.0f);
         m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
         m_digSound->play();
     });
@@ -61,6 +61,7 @@ void StateGame::onCreate()
 
             auto twa = jt::TweenAlpha::create(shape, 0.2f, 255, 0);
             twa->setStartDelay(0.1f);
+            twa->addCompleteCallback([shape](){shape->setPosition({ -5000, -5000 });});
             add(twa);
 
             std::shared_ptr<jt::Tween> twc1
@@ -201,7 +202,7 @@ void StateGame::onCreate()
         m_btnLoad->setDrawable(textLoad);
         m_btnLoad->setPosition(
             { GP::HudButtonSize().x / 2.0f, GP::GetScreenSize().y - GP::HudButtonSize().y });
-        m_btnLoad->addCallback([this]() { load("TODO"); });
+        m_btnLoad->addCallback([this]() { load(); });
         add(m_btnLoad);
 #if JT_ENABLE_WEB
         // TODO
@@ -328,24 +329,21 @@ void StateGame::deserialize(std::string const& str)
         }
     }
 }
-std::string StateGame::save()
+void StateGame::save()
 {
     getGame()->logger().info("Save");
-
 #if JT_ENABLE_WEB
     std::string const json_string = serialize();
     std::string const command = "save(" + json_string + ")";
     emscripten_run_script(command.c_str());
-    return "";
 #else
     std::ofstream outfile { "savegame.dat" };
     outfile << serialize() << std::endl;
     m_btnLoad->setActive(true);
-    return "";
 #endif
 }
 
-void StateGame::load(std::string const& str)
+void StateGame::load()
 {
     getGame()->logger().info("Load");
 #if JT_ENABLE_WEB

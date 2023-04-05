@@ -33,8 +33,8 @@ public:
     std::string serialize() const;
     void deserialize(std::string const&);
 
-    std::string save();
-    void load(std::string const& str);
+    void save();
+    void load();
 
 private:
     std::shared_ptr<jt::Shape> m_background;
