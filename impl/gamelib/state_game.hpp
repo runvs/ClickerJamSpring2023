@@ -55,6 +55,7 @@ private:
     bool m_hasEnded { false };
 
     api::API m_money;
+    std::shared_ptr<jt::SoundInterface> m_digSound;
 
     void onCreate() override;
     void onEnter() override;

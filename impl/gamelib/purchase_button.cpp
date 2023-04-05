@@ -36,11 +36,23 @@ void PurchaseButton::doCreate()
                 / api::from_uint64(1000)
             + api::from_uint64(1u);
         updateText();
+
+        m_soundGroup->play();
     });
 
     m_buttonAnimation = std::make_shared<jt::Animation>();
     m_buttonAnimation->loadFromJson(m_purchaseInfo.animationFile, textureManager());
     m_buttonAnimation->play(m_purchaseInfo.animationNameMenu);
+
+    std::vector<std::shared_ptr<jt::SoundInterface>> soundGroupSounds {};
+    for (auto i = 0; i != 5; ++i)
+    {
+        std::string const fileName = "assets/sfx/pling"+std::to_string(i)+".wav";
+        auto snd = getGame()->audio().addTemporarySound(fileName);
+        soundGroupSounds.push_back(snd);
+    }
+    m_soundGroup = getGame()->audio().addTemporarySoundGroup(soundGroupSounds);
+
 }
 
 void PurchaseButton::doUpdate(float const elapsed)

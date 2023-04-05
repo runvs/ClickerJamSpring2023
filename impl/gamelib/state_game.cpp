@@ -38,6 +38,7 @@ void StateGame::onCreate()
         m_bank->receiveMoney(value);
         getGame()->gfx().camera().shake(0.1, 3);
         m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
+        m_digSound->play();
     });
     add(m_mine_shaft_area);
 
@@ -215,6 +216,16 @@ void StateGame::onCreate()
     add(m_hud);
     // StateGame will call drawObjects itself.
     setAutoDraw(false);
+
+    std::vector<std::shared_ptr<jt::SoundInterface>> soundGroupSounds {};
+    for (auto i = 0; i != 6; ++i)
+    {
+        std::string const fileName = "assets/sfx/dig"+std::to_string(i)+".wav";
+        auto snd = getGame()->audio().addTemporarySound(fileName);
+        snd->setVolume(0.6f);
+        soundGroupSounds.push_back(snd);
+    }
+    m_digSound = getGame()->audio().addTemporarySoundGroup(soundGroupSounds);
 }
 
 void StateGame::onEnter() { }

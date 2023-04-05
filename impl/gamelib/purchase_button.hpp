@@ -1,6 +1,7 @@
 #ifndef CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP
 #define CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP
 
+#include "audio/sound/sound_interface.hpp"
 #include <animation.hpp>
 #include <arbitrary_precision_int/arbitrary_precision_int.hpp>
 #include <bank_interface.hpp>
@@ -39,6 +40,7 @@ private:
 
     bool m_canPurchase { false };
     bool m_hasBeenShown { false };
+    std::shared_ptr<jt::SoundInterface> m_soundGroup;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP
