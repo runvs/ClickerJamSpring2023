@@ -43,6 +43,10 @@ private:
     std::shared_ptr<Hud> m_hud;
     std::shared_ptr<MineShaftArea> m_mine_shaft_area;
 
+#if JT_ENABLE_WEB
+    std::shared_ptr<jt::Animation> m_mousePointer;
+#endif
+
     std::shared_ptr<jt::Shape> m_menuBackground;
 
     std::shared_ptr<jt::ObjectGroup<PurchaseButton>> m_purchaseButtons;
