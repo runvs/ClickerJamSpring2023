@@ -81,11 +81,8 @@ void StateGame::onCreate()
     m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
     m_menuBackground->setPosition(GP::HudMenuOffset());
 
-#if JT_ENABLE_WEB
-    m_mousePointer = std::make_shared<jt::Animation>();
-    m_mousePointer->loadFromJson("assets/pointer.json", textureManager());
-    m_mousePointer->play("default");
-#endif
+    m_mousePointer = std::make_shared<CustomMouseCursor>();
+    add(m_mousePointer);
 
     // group
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
@@ -272,19 +269,14 @@ void StateGame::onUpdate(float const elapsed)
     m_background->update(elapsed);
     m_vignette->update(elapsed);
 
-
-#if JT_ENABLE_WEB
-    m_mousePointer->setPosition(getGame()->input().mouse()->getMousePositionWorld());
-    if((jt::MathHelper::checkIsIn(
+    if ((jt::MathHelper::checkIsIn(
             { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
                 GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
             getGame()->input().mouse()->getMousePositionScreen()))) {
-        m_mousePointer->play("mine");
+        m_mousePointer->playAnimation("mine");
     } else {
-        m_mousePointer->play("default");
+        m_mousePointer->playAnimation("default");
     }
-    m_mousePointer->update(elapsed);
-#endif
 }
 
 void StateGame::onDraw() const
@@ -296,9 +288,7 @@ void StateGame::onDraw() const
     m_sparks->draw();
     m_vignette->draw();
     m_hud->draw();
-#if JT_ENABLE_WEB
-    m_mousePointer->draw(renderTarget());
-#endif
+    m_mousePointer->draw();
 }
 
 void StateGame::endGame()
