@@ -40,6 +40,8 @@ void StateMenu::onCreate()
         bgm->setVolume(0.5f);
         bgm->play();
     }
+    m_cursor = std::make_shared<CustomMouseCursor>();
+    add(m_cursor);
 }
 
 void StateMenu::onEnter()
@@ -242,6 +244,7 @@ void StateMenu::onDraw() const
     m_textVersion->draw(renderTarget());
     m_overlay->draw(renderTarget());
     m_vignette->draw();
+    m_cursor->draw();
 }
 
 std::string StateMenu::getName() const { return "State Menu"; }

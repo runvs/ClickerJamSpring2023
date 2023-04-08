@@ -81,6 +81,9 @@ void StateGame::onCreate()
     m_menuBackground->makeRect(GP::HudMenuSize(), textureManager());
     m_menuBackground->setPosition(GP::HudMenuOffset());
 
+    m_mousePointer = std::make_shared<CustomMouseCursor>();
+    add(m_mousePointer);
+
     // group
     m_purchaseButtons = std::make_shared<jt::ObjectGroup<PurchaseButton>>();
     add(m_purchaseButtons);
@@ -265,6 +268,15 @@ void StateGame::onUpdate(float const elapsed)
 
     m_background->update(elapsed);
     m_vignette->update(elapsed);
+
+    if ((jt::MathHelper::checkIsIn(
+            { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+                GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
+            getGame()->input().mouse()->getMousePositionScreen()))) {
+        m_mousePointer->playAnimation("mine");
+    } else {
+        m_mousePointer->playAnimation("default");
+    }
 }
 
 void StateGame::onDraw() const
@@ -276,6 +288,7 @@ void StateGame::onDraw() const
     m_sparks->draw();
     m_vignette->draw();
     m_hud->draw();
+    m_mousePointer->draw();
 }
 
 void StateGame::endGame()
