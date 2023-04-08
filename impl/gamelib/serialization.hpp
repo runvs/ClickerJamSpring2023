@@ -13,9 +13,6 @@ void from_json(const nlohmann::json& j, api::API& b);
 void to_json(nlohmann::json& j, const Bank& b);
 void from_json(const nlohmann::json& j, Bank& b);
 
-void to_json(nlohmann::json& j, const PurchaseInfo& i);
-void from_json(const nlohmann::json& j, PurchaseInfo& i);
-
 void to_json(nlohmann::json& j, const PurchasedObjects& b);
 
 #endif // CLICKERJAMSPRING2023_SERIALIZATION_HPP

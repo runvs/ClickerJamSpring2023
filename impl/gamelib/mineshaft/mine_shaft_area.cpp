@@ -63,11 +63,14 @@ void MineShaftArea::doDraw() const
 }
 void MineShaftArea::handleMouseClicks()
 {
-    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
-        && (jt::MathHelper::checkIsIn(
-            { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
-                GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
-            getGame()->input().mouse()->getMousePositionScreen()))) {
+    auto const mouseJustPressed = getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft);
+    auto const spaceBarJustPressed = getGame()->input().keyboard()->justPressed(jt::KeyCode::Space);
+    auto const isMouseInMineArea = (jt::MathHelper::checkIsIn(
+        { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+            GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
+        getGame()->input().mouse()->getMousePositionScreen()));
+
+    if (spaceBarJustPressed || (mouseJustPressed && isMouseInMineArea)) {
         m_callback(api::from_uint64(1u));
         auto active_layer = getActiveLayer();
         active_layer->progressAmount(1);

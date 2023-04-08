@@ -3,6 +3,7 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
+#include <strutils.hpp>
 #include "imgui.h"
 
 PurchaseButton::PurchaseButton(BankInterface& finances, PurchaseInfo const& info)
@@ -28,18 +29,7 @@ void PurchaseButton::doCreate()
 
     m_button->setGameInstance(getGame());
     m_button->create();
-    m_button->addCallback([this]() {
-        getGame()->logger().info(
-            "Button '" + m_purchaseInfo.name + "' pressed", { "PurchaseButton" });
-        m_bank.spendMoney(m_cost);
-        m_purchaseInfo.purchaseCallback(m_cost);
-        m_cost = m_cost * api::from_uint64(1000 * GP::PurchaseButtonCostIncreasePercent())
-                / api::from_uint64(1000)
-            + api::from_uint64(1u);
-        updateText();
-
-        m_soundGroup->play();
-    });
+    m_button->addCallback([this]() { purchaseAction(); });
     m_mouseOverRect = jt::Rectf { m_button->getPosition().x, m_button->getPosition().y,
         static_cast<float>(GP::HudButtonSize().x), static_cast<float>(GP::HudButtonSize().y) };
 
@@ -54,6 +44,19 @@ void PurchaseButton::doCreate()
         soundGroupSounds.push_back(snd);
     }
     m_soundGroup = getGame()->audio().addTemporarySoundGroup(soundGroupSounds);
+}
+
+void PurchaseButton::purchaseAction()
+{
+    getGame()->logger().info("Button '" + m_purchaseInfo.name + "' pressed", { "PurchaseButton" });
+    m_bank.spendMoney(m_cost);
+    m_purchaseInfo.purchaseCallback(m_cost);
+    m_cost = m_cost * api::from_uint64(1000 * GP::PurchaseButtonCostIncreasePercent())
+            / api::from_uint64(1000)
+        + api::from_uint64(1u);
+    updateText();
+
+    m_soundGroup->play();
 }
 
 void PurchaseButton::doUpdate(float const elapsed)
@@ -80,6 +83,10 @@ void PurchaseButton::doUpdate(float const elapsed)
     m_canPurchase = m_bank.canAffordAmount(m_cost);
     m_button->setActive(m_canPurchase);
     if (m_canPurchase) {
+        if(getGame()->input().keyboard()->justPressed(m_purchaseInfo.keyCode)) {
+            purchaseAction();
+        }
+
         m_buttonAnimation->setColor(jt::colors::White);
         m_buttonText->setColor(jt::colors::White);
     } else {
@@ -101,12 +108,15 @@ void PurchaseButton::doDraw() const
         if (jt::MathHelper::checkIsIn(m_mouseOverRect, mousePos)) {
             ImGui::SetNextWindowPos(
                 ImVec2 { mousePos.x * GP::GetZoom() + 10, mousePos.y * GP::GetZoom() });
-            ImGui::SetNextWindowSize(ImVec2 { 150, 65 });
+            ImGui::SetNextWindowSize(ImVec2 { 150, 82 });
             std::string windowName = "Purchase " + m_purchaseInfo.name;
             ImGui::Begin(
                 windowName.c_str(), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
             ImGui::Text("Cost: %s$", m_cost.to_exp_string().c_str());
             ImGui::Text("Income: %s$/s", m_purchaseInfo.income.to_exp_string().c_str());
+            std::string keyCodeText = m_purchaseInfo.keyCode._to_string();
+            strutil::replace_all(keyCodeText, "Num", "");
+            ImGui::Text("Hotkey: '%s'", keyCodeText.c_str());
             ImGui::End();
         }
     }

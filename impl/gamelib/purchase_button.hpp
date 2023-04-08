@@ -43,6 +43,7 @@ private:
     std::shared_ptr<jt::SoundInterface> m_soundGroup;
 
     jt::Rectf m_mouseOverRect;
+    void purchaseAction();
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP

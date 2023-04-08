@@ -2,6 +2,7 @@
 #define CLICKERJAMSPRING2023_PURCHASE_INFO_HPP
 
 #include <arbitrary_precision_int/arbitrary_precision_int.hpp>
+#include <input/keyboard/keyboard_defines.hpp>
 #include <functional>
 #include <string>
 
@@ -15,6 +16,7 @@ struct PurchaseInfo {
     int objectsPerLine { 25 };
     float timerMax { 1.5f };
     api::API income { api::from_uint64(1u) };
+    jt::KeyCode keyCode { jt::KeyCode::Num1 };
 
     // arguments that can be filled automatically
     int index { 0 };

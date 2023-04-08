@@ -39,7 +39,14 @@ void StateGame::onCreate()
         = std::make_shared<MineShaftArea>(*m_mine_shaft_model.get(), [this](api::API const& value) {
               m_bank->receiveMoney(value);
               getGame()->gfx().camera().shake(0.1f, 3.0f);
-              m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
+
+              auto const isMouseInMineArea = (jt::MathHelper::checkIsIn(
+                  { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+                      GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
+                  getGame()->input().mouse()->getMousePositionScreen()));
+              if(isMouseInMineArea) {
+                  m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
+              }
               m_digSound->play();
           });
     add(m_mine_shaft_area);
@@ -108,6 +115,7 @@ void StateGame::onCreate()
         miner.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         miner.timerMax = 1.0f;
         miner.income = api::from_uint64(1u);
+        miner.keyCode = jt::KeyCode::Num1;
 
         purchaseInfos.push_back(miner);
     }
@@ -119,7 +127,7 @@ void StateGame::onCreate()
         geologist.animationNameMenu = "idle";
         geologist.animationNamePurchased = "mine";
 
-        geologist.initialCost = api::from_uint64(100u);
+        geologist.initialCost = api::from_uint64(250u);
         geologist.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Geologist");
             // TODO other effects
@@ -129,6 +137,7 @@ void StateGame::onCreate()
         geologist.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         geologist.timerMax = 1.0f;
         geologist.income = api::from_uint64(8u);
+        geologist.keyCode = jt::KeyCode::Num2;
 
         purchaseInfos.push_back(geologist);
     }
@@ -140,7 +149,7 @@ void StateGame::onCreate()
         driller.animationNameMenu = "idle";
         driller.animationNamePurchased = "mine";
 
-        driller.initialCost = api::from_uint64(1000u);
+        driller.initialCost = api::from_uint64(3000u);
         driller.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Driller");
             // TODO other effects
@@ -149,7 +158,8 @@ void StateGame::onCreate()
 
         driller.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         driller.timerMax = 1.0f;
-        driller.income = api::from_uint64(70u);
+        driller.income = api::from_uint64(65u);
+        driller.keyCode = jt::KeyCode::Num3;
 
         purchaseInfos.push_back(driller);
     }
@@ -160,7 +170,7 @@ void StateGame::onCreate()
         blastMaster.animationNameMenu = "idle";
         blastMaster.animationNamePurchased = "mine";
 
-        blastMaster.initialCost = api::from_uint64(10000u);
+        blastMaster.initialCost = api::from_uint64(45000u);
         blastMaster.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Blaster");
             // TODO other effects
@@ -170,6 +180,7 @@ void StateGame::onCreate()
         blastMaster.objectsPerLine = GP::PurchasedNumberOfObjectsPerLine();
         blastMaster.timerMax = 1.0f;
         blastMaster.income = api::from_uint64(600u);
+        blastMaster.keyCode = jt::KeyCode::Num4;
 
         purchaseInfos.push_back(blastMaster);
     }
