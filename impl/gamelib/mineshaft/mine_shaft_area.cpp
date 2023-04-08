@@ -68,7 +68,7 @@ void MineShaftArea::handleMouseClicks()
             { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
                 GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
             getGame()->input().mouse()->getMousePositionScreen()))) {
-        m_callback(api::from_uint64(5u));
+        m_callback(api::from_uint64(1u));
         auto active_layer = getActiveLayer();
         active_layer->progressAmount(1);
         if (active_layer->isMined()) {
