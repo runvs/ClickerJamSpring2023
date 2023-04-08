@@ -1,7 +1,9 @@
 #include "purchase_button.hpp"
-#include "drawable_helpers.hpp"
-#include "game_properties.hpp"
+#include <drawable_helpers.hpp>
 #include <game_interface.hpp>
+#include <game_properties.hpp>
+#include <math_helper.hpp>
+#include "imgui.h"
 
 PurchaseButton::PurchaseButton(BankInterface& finances, PurchaseInfo const& info)
     : m_bank { finances }
@@ -31,7 +33,6 @@ void PurchaseButton::doCreate()
             "Button '" + m_purchaseInfo.name + "' pressed", { "PurchaseButton" });
         m_bank.spendMoney(m_cost);
         m_purchaseInfo.purchaseCallback(m_cost);
-        // TODO move cost increase into GP
         m_cost = m_cost * api::from_uint64(1000 * GP::PurchaseButtonCostIncreasePercent())
                 / api::from_uint64(1000)
             + api::from_uint64(1u);
@@ -39,20 +40,20 @@ void PurchaseButton::doCreate()
 
         m_soundGroup->play();
     });
+    m_mouseOverRect = jt::Rectf { m_button->getPosition().x, m_button->getPosition().y,
+        static_cast<float>(GP::HudButtonSize().x), static_cast<float>(GP::HudButtonSize().y) };
 
     m_buttonAnimation = std::make_shared<jt::Animation>();
     m_buttonAnimation->loadFromJson(m_purchaseInfo.animationFile, textureManager());
     m_buttonAnimation->play(m_purchaseInfo.animationNameMenu);
 
     std::vector<std::shared_ptr<jt::SoundInterface>> soundGroupSounds {};
-    for (auto i = 0; i != 5; ++i)
-    {
-        std::string const fileName = "assets/sfx/pling"+std::to_string(i)+".wav";
+    for (auto i = 0; i != 5; ++i) {
+        std::string const fileName = "assets/sfx/pling" + std::to_string(i) + ".wav";
         auto snd = getGame()->audio().addTemporarySound(fileName);
         soundGroupSounds.push_back(snd);
     }
     m_soundGroup = getGame()->audio().addTemporarySoundGroup(soundGroupSounds);
-
 }
 
 void PurchaseButton::doUpdate(float const elapsed)
@@ -93,6 +94,21 @@ void PurchaseButton::doDraw() const
         m_button->draw();
         m_buttonText->draw(renderTarget());
         m_buttonAnimation->draw(renderTarget());
+    }
+
+    if (wasVisible()) {
+        auto mousePos = getGame()->input().mouse()->getMousePositionScreen();
+        if (jt::MathHelper::checkIsIn(m_mouseOverRect, mousePos)) {
+            ImGui::SetNextWindowPos(
+                ImVec2 { mousePos.x * GP::GetZoom() + 10, mousePos.y * GP::GetZoom() });
+            ImGui::SetNextWindowSize(ImVec2 { 150, 65 });
+            std::string windowName = "Purchase " + m_purchaseInfo.name;
+            ImGui::Begin(
+                windowName.c_str(), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            ImGui::Text("Cost: %s$", m_cost.to_exp_string().c_str());
+            ImGui::Text("Income: %s$/s", m_purchaseInfo.income.to_exp_string().c_str());
+            ImGui::End();
+        }
     }
 }
 void PurchaseButton::updateText()

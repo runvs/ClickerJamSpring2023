@@ -22,6 +22,7 @@ private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
+    void drawTooltip() const;
 
     BankInterface& m_bank;
     PurchaseInfo m_info;

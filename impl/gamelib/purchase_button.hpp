@@ -41,6 +41,8 @@ private:
     bool m_canPurchase { false };
     bool m_hasBeenShown { false };
     std::shared_ptr<jt::SoundInterface> m_soundGroup;
+
+    jt::Rectf m_mouseOverRect;
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP

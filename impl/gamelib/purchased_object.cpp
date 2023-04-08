@@ -59,11 +59,17 @@ void PurchasedObject::doDraw() const
         m_animation->draw(renderTarget());
     }
     m_text->draw(renderTarget());
+    drawTooltip();
+}
+void PurchasedObject::drawTooltip() const
+{
     auto mousePos = getGame()->input().mouse()->getMousePositionScreen();
     if (jt::MathHelper::checkIsIn(m_rect, mousePos)) {
-        ImGui::SetNextWindowPos(ImVec2 { mousePos.x * GP::GetZoom(), mousePos.y * GP::GetZoom() });
-        ImGui::SetNextWindowSize(ImVec2 { 130, 65 });
-        ImGui::Begin(m_info.name.c_str());
+        ImGui::SetNextWindowPos(
+            ImVec2 { mousePos.x * GP::GetZoom() + 10, mousePos.y * GP::GetZoom() });
+        ImGui::SetNextWindowSize(ImVec2 { 150, 65 });
+        ImGui::Begin(
+            m_info.name.c_str(), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Amount: %i", m_numberOfObjects);
         ImGui::Text("Income: %s$/s", m_incomePerSecond.to_exp_string().c_str());
         ImGui::End();
@@ -82,6 +88,7 @@ void PurchasedObject::buyOne()
     float const width
         = multipleLines ? GP::PurchasedNumberOfObjectsPerLine() * 10.0f : m_numberOfObjects * 10.0f;
     float const height = (m_numberOfObjects / GP::PurchasedNumberOfObjectsPerLine() + 1) * 8.0f;
+
     m_rect = jt::Rectf { m_baseOffset.x + 7, m_baseOffset.y + 17, width + 5, height + 7 };
     m_incomePerSecond = m_info.income * api::from_uint64(m_numberOfObjects)
         * api::from_uint64(1000u)
