@@ -113,7 +113,7 @@ void PurchaseButton::doDraw() const
 }
 void PurchaseButton::updateText()
 {
-    std::string const text = "    " + m_purchaseInfo.name + " " + m_cost.to_exp_string();
+    std::string const text = "   " + m_purchaseInfo.name + " " + m_cost.to_exp_string();
     m_buttonText->setText(text);
 }
 api::API PurchaseButton::getPrice() const { return m_cost; }

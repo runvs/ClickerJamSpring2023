@@ -34,9 +34,9 @@ jt::Palette GP::getPalette()
 int GP::PhysicVelocityIterations() { return 20; }
 
 int GP::PhysicPositionIterations() { return 20; }
-jt::Vector2u GP::HudButtonSize() { return jt::Vector2u { 120, 20 }; }
+jt::Vector2u GP::HudButtonSize() { return jt::Vector2u { 130, 20 }; }
 jt::Vector2f GP::HudMenuOffset() { return jt::Vector2f { GetScreenSize().x / 3.0f * 2.0f, 0.0f }; }
-jt::Vector2f GP::HudMenuMargin() { return jt::Vector2f { 7.0f, 5.0f }; }
+jt::Vector2f GP::HudMenuMargin() { return jt::Vector2f { 2.0f, 5.0f }; }
 jt::Vector2f GP::HudMenuSize()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
