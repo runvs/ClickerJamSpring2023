@@ -9,6 +9,7 @@ public:
 
     api::API getCurrentDepth();
     int getNumberOfMinedLayers();
+    void addMinedLayer(int amount = 1);
     void descend();
 
 private:

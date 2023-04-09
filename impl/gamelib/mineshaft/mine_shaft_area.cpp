@@ -34,7 +34,7 @@ void MineShaftArea::doCreate()
             color = jt::Color { 112u, 128u, 144u };
         }
         auto layer = std::make_shared<RockLayer>(
-            jt::Random::getInt(1, i + 2), color, static_cast<float>(i));
+            jt::Random::getInt(1, static_cast<int>(i) + 2), color, static_cast<float>(i));
         m_rock_layers[i] = (layer);
         layer->setGameInstance(getGame());
         layer->create();
@@ -76,7 +76,7 @@ void MineShaftArea::handleMouseClicks()
         auto active_layer = getActiveLayer();
         active_layer->progressAmount(1);
         if (active_layer->isMined()) {
-            // TODO: add animation + sound for braking layer (flash?)
+            m_mine_shaft_model.addMinedLayer();
             flashActiveLayer();
             cycleLayers();
             descend();
@@ -97,9 +97,16 @@ void MineShaftArea::cycleLayers()
         }
         layer->ascend();
     }
-    auto new_layer = std::make_shared<RockLayer>(
-        jt::Random::getInt(1, m_mine_shaft_model.getNumberOfMinedLayers() + 5),
-        jt::Random::getRandomColor(), 16.0f);
+    auto r = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+    auto g = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+    auto b = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+    auto min = static_cast<int>(m_mine_shaft_model.getNumberOfMinedLayers() / 2) + 1;
+    auto max = m_mine_shaft_model.getNumberOfMinedLayers() + 5;
+    auto hardness = jt::Random::getInt(min, max);
+    std::cout << "Creating layer with rgb colors {" << static_cast<int>(r) << ", "
+              << static_cast<int>(g) << ", " << static_cast<int>(b) << "} and hardness " << hardness
+              << " from range " << min << "-" << max << std::endl;
+    auto new_layer = std::make_shared<RockLayer>(hardness, jt::Color({ r, g, b }), 16.0f);
     new_layer->setGameInstance(getGame());
     new_layer->create();
     m_rock_layers.put(new_layer);

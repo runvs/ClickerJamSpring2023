@@ -1,5 +1,7 @@
 
 #include "mine_shaft_model.hpp"
+#include <iostream>
+
 MineShaftModel::MineShaftModel()
 {
     m_current_depth = api::from_uint64(0u);
@@ -14,4 +16,12 @@ void MineShaftModel::descend()
     // TODO: if player reaches MAX_INT win game? Alternatively just wrap around to 0 or something...
     m_number_of_layers_mined++;
 }
+
 int MineShaftModel::getNumberOfMinedLayers() { return m_number_of_layers_mined; }
+
+void MineShaftModel::addMinedLayer(int amount)
+{
+    m_number_of_layers_mined += amount;
+    std::cout << "Number of mined layers increased by " << amount << " and is now "
+              << m_number_of_layers_mined << std::endl;
+}
