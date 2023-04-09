@@ -30,6 +30,7 @@ private:
 
     void handleMouseClicks();
     void cycleLayers();
+    void descend();
 };
 
 #endif // CLICKERJAMSPRING2023_MINE_SHAFT_AREA_HPP

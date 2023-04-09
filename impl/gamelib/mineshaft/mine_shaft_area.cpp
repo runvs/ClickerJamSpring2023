@@ -63,7 +63,8 @@ void MineShaftArea::doDraw() const
 }
 void MineShaftArea::handleMouseClicks()
 {
-    auto const mouseJustPressed = getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft);
+    auto const mouseJustPressed
+        = getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft);
     auto const spaceBarJustPressed = getGame()->input().keyboard()->justPressed(jt::KeyCode::Space);
     auto const isMouseInMineArea = (jt::MathHelper::checkIsIn(
         { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
@@ -77,6 +78,7 @@ void MineShaftArea::handleMouseClicks()
         if (active_layer->isMined()) {
             // TODO: add animation + sound for braking layer (flash?)
             cycleLayers();
+            descend();
         }
     }
 }
@@ -101,3 +103,4 @@ void MineShaftArea::cycleLayers()
     new_layer->create();
     m_rock_layers.put(new_layer);
 }
+void MineShaftArea::descend() { m_mine_shaft_model.descend(); }

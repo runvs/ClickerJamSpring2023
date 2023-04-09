@@ -9,7 +9,7 @@ public:
 
     api::API getCurrentDepth();
     int getNumberOfMinedLayers();
-    void descent();
+    void descend();
 
 private:
     api::API m_current_depth;
