@@ -13,6 +13,7 @@ RockLayer::RockLayer(const int hardness, const jt::Color color, const float init
 {
     m_progress = 0;
 }
+
 void RockLayer::progressAmount(int progress)
 {
     if (isMined()) {
@@ -24,6 +25,7 @@ void RockLayer::progressAmount(int progress)
 }
 
 bool RockLayer::isMined() { return m_progress > m_hardness; }
+
 void RockLayer::ascend()
 {
     m_layer_offset -= 1;
@@ -50,11 +52,13 @@ void RockLayer::doCreate()
     m_shape_left->makeRect({ x_offset_left, GP::HudMineShaftLayerSize().y }, textureManager());
     m_shape_left->setPosition({ GP::HudMineShaftOffset().x, y_offset });
     m_shape_left->setColor(m_color);
+
     m_shape_right = std::make_shared<jt::Shape>();
     m_shape_right->makeRect({ x_offset_right, GP::HudMineShaftLayerSize().y }, textureManager());
     m_shape_right->setPosition(
         { GP::HudMineShaftOffset().x + GP::HudMineShaftLayerSize().x - x_offset_right, y_offset });
     m_shape_right->setColor(m_color);
+
     // middle just covers left & right shapes and is set to low alpha when layer is mined
     m_shape_middle = std::make_shared<jt::Shape>();
     m_shape_middle->makeRect(GP::HudMineShaftLayerSize(), textureManager());
@@ -67,15 +71,18 @@ void RockLayer::doCreate()
 
     std::cout << "new layer with hardness " << m_hardness << " created" << std::endl;
 }
+
 void RockLayer::doUpdate(const float elapsed)
 {
     m_shape_left->update(elapsed);
     m_shape_right->update(elapsed);
     m_shape_middle->update(elapsed);
 }
+
 void RockLayer::doDraw() const
 {
     m_shape_left->draw(renderTarget());
     m_shape_right->draw(renderTarget());
     m_shape_middle->draw(renderTarget());
 }
+void RockLayer::flash() { m_shape_middle->flash(0.2f); }

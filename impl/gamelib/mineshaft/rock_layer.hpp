@@ -16,6 +16,7 @@ public:
 
     bool isMined();
     void ascend();
+    void flash();
 
 private:
     void doCreate() override;

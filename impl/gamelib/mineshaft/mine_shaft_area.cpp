@@ -77,6 +77,7 @@ void MineShaftArea::handleMouseClicks()
         active_layer->progressAmount(1);
         if (active_layer->isMined()) {
             // TODO: add animation + sound for braking layer (flash?)
+            flashActiveLayer();
             cycleLayers();
             descend();
         }
@@ -103,4 +104,7 @@ void MineShaftArea::cycleLayers()
     new_layer->create();
     m_rock_layers.put(new_layer);
 }
+
 void MineShaftArea::descend() { m_mine_shaft_model.descend(); }
+
+void MineShaftArea::flashActiveLayer() { getActiveLayer()->flash(); }
