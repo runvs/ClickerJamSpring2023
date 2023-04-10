@@ -5,22 +5,21 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <random/random.hpp>
+#include <tweens/tween_alpha.hpp>
+#include <tweens/tween_scale.hpp>
 #include <imgui.h>
 
-PurchasedObject::PurchasedObject(BankInterface& bank, PurchaseInfo const& info, int numberOfObjects)
+PurchasedObject::PurchasedObject(BankInterface& bank, PurchaseInfo const& info,
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
     : m_bank { bank }
     , m_info { info }
-    , m_numberOfObjects { numberOfObjects }
+    , m_addTweenCallback { addTweenCallback }
 {
     m_timers.resize(m_numberOfObjects);
 }
 
 void PurchasedObject::doCreate()
 {
-    m_animation = std::make_shared<jt::Animation>();
-    m_animation->loadFromJson(m_info.animationFile, textureManager());
-    m_animation->play(m_info.animationNamePurchased);
-
     m_baseOffset = jt::Vector2f { -8, 22.0f + 54.0f * m_info.index };
 
     m_text = jt::dh::createText(renderTarget(), "", 16);
@@ -30,7 +29,18 @@ void PurchasedObject::doCreate()
 
 void PurchasedObject::doUpdate(float const elapsed)
 {
-    m_animation->update(elapsed);
+    m_animRestartTimer += elapsed;
+    bool restart = false;
+    if (m_animRestartTimer > m_animRestartTimerMax) {
+        restart = true;
+        m_animRestartTimer -= m_animRestartTimerMax;
+    }
+    for (auto& a : m_animations) {
+        a->update(elapsed);
+        if (restart) {
+            a->play(m_info.animationNamePurchased, 0, true);
+        }
+    }
     for (auto& t : m_timers) {
         t += elapsed;
         if (t >= m_info.timerMax) {
@@ -43,24 +53,15 @@ void PurchasedObject::doUpdate(float const elapsed)
 
 void PurchasedObject::doDraw() const
 {
-    for (auto i = 0; i != m_numberOfObjects; ++i) {
-        int x = i % m_info.objectsPerLine;
-        int y = i / m_info.objectsPerLine;
-        if (y >= GP::PurchasedMaxNumberOfLines()) {
-            break;
-        }
-        float xOffset = 0.0f;
-        if (y % 2 == 1) {
-            xOffset = 5.0f;
-        }
-        m_animation->setPosition(
-            m_baseOffset + jt::Vector2f { xOffset, 0.0f } + jt::Vector2f { x * 10.0f, y * 8.0f });
-        m_animation->update(0.0f);
-        m_animation->draw(renderTarget());
+    for (auto i = 0; i != m_numberOfObjects; ++i) { }
+    for (auto const& a : m_animations) {
+        a->draw(renderTarget());
     }
+
     m_text->draw(renderTarget());
     drawTooltip();
 }
+
 void PurchasedObject::drawTooltip() const
 {
     auto mousePos = getGame()->input().mouse()->getMousePositionScreen();
@@ -78,7 +79,13 @@ void PurchasedObject::drawTooltip() const
 
 void PurchasedObject::buyOne()
 {
+    for (auto& a : m_animations) {
+        a->flash(0.15f, jt::Color { 255, 255, 255, 150 });
+    }
+    addNewAnimation();
+
     m_numberOfObjects++;
+
     m_timers.push_back(jt::Random::getFloat(0, m_info.timerMax));
     auto const maxObjects = GP::PurchasedMaxNumberOfLines() * GP::PurchasedNumberOfObjectsPerLine();
     if (m_numberOfObjects > maxObjects) {
@@ -93,8 +100,46 @@ void PurchasedObject::buyOne()
     m_incomePerSecond = m_info.income * api::from_uint64(m_numberOfObjects)
         * api::from_uint64(1000u)
         / api::from_uint64(static_cast<std::uint64_t>(m_info.timerMax) * 1000);
+}
+void PurchasedObject::addNewAnimation()
+{
+    auto const maxObjects = GP::PurchasedMaxNumberOfLines() * GP::PurchasedNumberOfObjectsPerLine();
+    if (m_numberOfObjects < maxObjects) {
+        auto newAnimation = std::make_shared<jt::Animation>();
+        newAnimation = std::make_shared<jt::Animation>();
+        newAnimation->loadFromJson(m_info.animationFile, textureManager());
+        newAnimation->play(m_info.animationNamePurchased);
 
-    m_animation->flash(0.2f, jt::Color { 255, 255, 255, 150 });
+        int const x = m_numberOfObjects % m_info.objectsPerLine;
+        int const y = m_numberOfObjects / m_info.objectsPerLine;
+        float xOffset = 0.0f;
+        if (y % 2 == 1) {
+            xOffset = 5.0f;
+        }
+        newAnimation->setPosition(
+            m_baseOffset + jt::Vector2f { xOffset, 0.0f } + jt::Vector2f { x * 10.0f, y * 8.0f });
+        newAnimation->update(0.0f);
+        newAnimation->draw(renderTarget());
+        m_animations.push_back(newAnimation);
+
+        if (m_animRestartTimerMax == 0.0f) {
+            m_animRestartTimerMax = newAnimation->getCurrentAnimTotalTime();
+        }
+        auto const tweenTime = 0.35f;
+        auto const tweenScale = jt::TweenScale::create(
+            newAnimation, tweenTime, jt::Vector2f { 2.0f, 2.0f }, jt::Vector2f { 1.0f, 1.0f });
+        m_addTweenCallback(tweenScale);
+
+        auto tweenAlpha = jt::TweenAlpha::create(newAnimation, tweenTime, 0u, 255u);
+        tweenAlpha->addCompleteCallback(
+            [newAnimation]() { newAnimation->flash(0.2f, jt::colors::White); });
+        m_addTweenCallback(tweenAlpha);
+    } else {
+        auto const tweenTime = 0.15f;
+        auto const tweenScale = jt::TweenScale::create(
+            m_text, tweenTime, jt::Vector2f { 1.5f, 1.5f }, jt::Vector2f { 1.0f, 1.0f });
+        m_addTweenCallback(tweenScale);
+    }
 }
 
 api::API PurchasedObject::getInputPerSecond() const { return m_incomePerSecond; }

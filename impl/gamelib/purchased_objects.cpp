@@ -1,16 +1,19 @@
 #include "purchased_objects.hpp"
 #include <game_properties.hpp>
 
-PurchasedObjects::PurchasedObjects(BankInterface& bank, std::vector<PurchaseInfo> const& infos)
+PurchasedObjects::PurchasedObjects(BankInterface& bank, std::vector<PurchaseInfo> const& infos,
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
     : m_bank { bank }
     , m_infos { infos }
+    , m_addTweenCallback { addTweenCallback }
 {
 }
 
 void PurchasedObjects::doCreate()
 {
     for (auto const& i : m_infos) {
-        m_purchasedObjects[i.name] = std::make_shared<PurchasedObject>(m_bank, i);
+        m_purchasedObjects[i.name]
+            = std::make_shared<PurchasedObject>(m_bank, i, m_addTweenCallback);
         m_purchasedObjects[i.name]->setGameInstance(getGame());
         m_purchasedObjects[i.name]->create();
     }

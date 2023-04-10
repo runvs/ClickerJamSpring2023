@@ -6,11 +6,13 @@
 #include <game_object.hpp>
 #include <purchase_info.hpp>
 #include <text.hpp>
+#include <tweens/tween_interface.hpp>
 #include <vector>
 
 class PurchasedObject : public jt::GameObject {
 public:
-    PurchasedObject(BankInterface& bank, PurchaseInfo const& info, int numberOfObjects = 0);
+    PurchasedObject(BankInterface& bank, PurchaseInfo const& info,
+        std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
 
     void buyOne();
 
@@ -26,15 +28,21 @@ private:
 
     BankInterface& m_bank;
     PurchaseInfo m_info;
-    std::vector<float> m_timers;
-    int m_numberOfObjects;
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> m_addTweenCallback;
 
-    mutable std::shared_ptr<jt::Animation> m_animation;
+    int m_numberOfObjects { 0 };
+    std::vector<float> m_timers {};
+
+    float m_animRestartTimer { 0.0f };
+    float m_animRestartTimerMax { 0.0f };
+
+    mutable std::vector<std::shared_ptr<jt::Animation>> m_animations;
     std::shared_ptr<jt::Text> m_text;
 
     jt::Vector2f m_baseOffset;
     jt::Rectf m_rect;
     api::API m_incomePerSecond;
+    void addNewAnimation();
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECT_HPP

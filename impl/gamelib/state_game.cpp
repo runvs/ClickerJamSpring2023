@@ -189,7 +189,8 @@ void StateGame::onCreate()
         add(button);
     }
 
-    m_purchasedObjects = std::make_shared<PurchasedObjects>(*m_bank.get(), purchaseInfos);
+    m_purchasedObjects = std::make_shared<PurchasedObjects>(
+        *m_bank.get(), purchaseInfos, [this](auto tw) { add(tw); });
     add(m_purchasedObjects);
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
