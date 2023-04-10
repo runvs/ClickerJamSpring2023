@@ -31,9 +31,6 @@ jt::Palette GP::getPalette()
     return p;
 }
 
-int GP::PhysicVelocityIterations() { return 20; }
-
-int GP::PhysicPositionIterations() { return 20; }
 jt::Vector2u GP::HudButtonSize() { return jt::Vector2u { 130, 20 }; }
 jt::Vector2f GP::HudMenuOffset() { return jt::Vector2f { GetScreenSize().x / 3.0f * 2.0f, 0.0f }; }
 jt::Vector2f GP::HudMenuMargin() { return jt::Vector2f { 2.0f, 5.0f }; }
@@ -47,11 +44,6 @@ jt::Vector2f GP::HudMineShaftOffset()
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 6.0f,
         0.0f };
 };
-jt::Vector2f GP::HudMineShaftSize()
-{
-    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) - 5.0f,
-        GP::GetScreenSize().y };
-};
 jt::Vector2f GP::HudMineShaftActiveLayerOffset()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)),
@@ -59,7 +51,7 @@ jt::Vector2f GP::HudMineShaftActiveLayerOffset()
 };
 jt::Vector2f GP::HudMineShaftLayerSize()
 {
-    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
+    return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) - 5.0f,
         static_cast<float>(static_cast<int>(GetScreenSize().y / 17.0f)) + 1.0f };
 };
 

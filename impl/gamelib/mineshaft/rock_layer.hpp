@@ -10,7 +10,7 @@
 
 class RockLayer : public jt::GameObject {
 public:
-    RockLayer(int hardness, jt::Color const& color, float initial_layer_offset);
+    RockLayer(int hardness, jt::Color const& color, float initialLayerOffset, bool isSky = false);
 
     void progressAmount(int progress);
 
@@ -30,8 +30,11 @@ private:
     int m_progress;
     float m_layer_offset;
 
-    std::shared_ptr<jt::Sprite> m_rocks;
-    std::shared_ptr<jt::Shape> m_shape_middle;
+    bool m_isSky;
+
+    std::shared_ptr<jt::Sprite> m_spriteRocks;
+    std::shared_ptr<jt::Shape> m_shapeBackground;
+    std::shared_ptr<jt::Shape> m_shapeMiddle;
 
     std::function<void(api::API const&)> m_callback;
 

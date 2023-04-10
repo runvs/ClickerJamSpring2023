@@ -14,7 +14,7 @@ MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api
 void MineShaftArea::doCreate()
 {
     m_background_shape = std::make_shared<jt::Shape>();
-    m_background_shape->makeRect(GP::HudMineShaftSize(), textureManager());
+    m_background_shape->makeRect(GP::HudMineShaftLayerSize(), textureManager());
     m_background_shape->setPosition(GP::HudMineShaftOffset());
     m_background_shape->setColor(jt::colors::Black);
     m_background_shape->update(1.0f);
@@ -22,19 +22,21 @@ void MineShaftArea::doCreate()
     std::uint8_t active_layer_index = m_rock_layers.capacity() / 2;
     for (auto i = 0u; i != m_rock_layers.capacity(); i++) {
         jt::Color color;
+        auto isSky = false;
         if (i < active_layer_index) {
             std::uint8_t offset = 5u * i;
             std::uint8_t r = (10u + offset) % 255;
             std::uint8_t g = (10u + offset) % 255;
             std::uint8_t b = (100u + offset) % 255;
             color = jt::Color { r, g, b };
+            isSky = true;
         } else if (i > active_layer_index) {
             color = jt::Random::getRandomColor();
         } else {
             color = jt::Color { 112u, 128u, 144u };
         }
         auto layer = std::make_shared<RockLayer>(
-            jt::Random::getInt(1, static_cast<int>(i) + 2), color, static_cast<float>(i));
+            jt::Random::getInt(1, static_cast<int>(i) + 2), color, static_cast<float>(i), isSky);
         m_rock_layers[i] = (layer);
         layer->setGameInstance(getGame());
         layer->create();

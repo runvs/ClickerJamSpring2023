@@ -31,14 +31,10 @@ public:
 
     static jt::Palette getPalette();
 
-    static int PhysicVelocityIterations();
-    static int PhysicPositionIterations();
-
     static jt::Vector2u HudButtonSize();
     static jt::Vector2f HudMenuOffset();
     static jt::Vector2f HudMenuSize();
     static jt::Vector2f HudMenuMargin();
-    static jt::Vector2f HudMineShaftSize();
     static jt::Vector2f HudMineShaftOffset();
     static jt::Vector2f HudMineShaftActiveLayerOffset();
     static jt::Vector2f HudMineShaftLayerSize();
@@ -47,7 +43,6 @@ public:
 
     static float PurchaseButtonRevealAtPercentage();
     static float PurchaseButtonCostIncreasePercent();
-    static float HudMineShaftLayerHeight();
     static int PurchasedMaxNumberOfLines();
 };
 
