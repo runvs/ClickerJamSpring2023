@@ -55,7 +55,7 @@ void PurchaseButton::purchaseAction()
             / api::from_uint64(1000)
         + api::from_uint64(1u);
     updateText();
-
+    m_button->getBackground()->flash(0.2f, jt::Color { 255, 255, 255, 150 });
     m_soundGroup->play();
 }
 
@@ -70,7 +70,6 @@ void PurchaseButton::doUpdate(float const elapsed)
         if (api::compare(m_bank.getCurrentMoney(), showAt) >= 0) {
             m_hasBeenShown = true;
             m_button->getBackground()->flash(0.4f, jt::colors::Green);
-            // TODO play sound
         }
     }
     m_button->update(elapsed);
@@ -83,7 +82,7 @@ void PurchaseButton::doUpdate(float const elapsed)
     m_canPurchase = m_bank.canAffordAmount(m_cost);
     m_button->setActive(m_canPurchase);
     if (m_canPurchase) {
-        if(getGame()->input().keyboard()->justPressed(m_purchaseInfo.keyCode)) {
+        if (getGame()->input().keyboard()->justPressed(m_purchaseInfo.keyCode)) {
             purchaseAction();
         }
 

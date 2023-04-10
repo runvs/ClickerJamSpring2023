@@ -93,6 +93,8 @@ void PurchasedObject::buyOne()
     m_incomePerSecond = m_info.income * api::from_uint64(m_numberOfObjects)
         * api::from_uint64(1000u)
         / api::from_uint64(static_cast<std::uint64_t>(m_info.timerMax) * 1000);
+
+    m_animation->flash(0.2f, jt::Color { 255, 255, 255, 150 });
 }
 
 api::API PurchasedObject::getInputPerSecond() const { return m_incomePerSecond; }

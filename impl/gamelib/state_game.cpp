@@ -107,7 +107,6 @@ void StateGame::onCreate()
         miner.initialCost = api::from_uint64(8u);
         miner.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Miner");
-            // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
         };
 
@@ -129,7 +128,6 @@ void StateGame::onCreate()
         geologist.initialCost = api::from_uint64(250u);
         geologist.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Geologist");
-            // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
         };
 
@@ -151,7 +149,6 @@ void StateGame::onCreate()
         driller.initialCost = api::from_uint64(3000u);
         driller.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Driller");
-            // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
         };
 
@@ -172,7 +169,6 @@ void StateGame::onCreate()
         blastMaster.initialCost = api::from_uint64(45000u);
         blastMaster.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Blaster");
-            // TODO other effects
             // Note: No need to remove money from bank, button already takes care of this
         };
 
