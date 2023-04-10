@@ -1,6 +1,7 @@
 #include "purchased_object.hpp"
 #include <bank_interface.hpp>
 #include <drawable_helpers.hpp>
+#include <ease/expo.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
@@ -128,6 +129,8 @@ void PurchasedObject::addNewAnimation()
         auto const tweenTime = 0.35f;
         auto const tweenScale = jt::TweenScale::create(
             newAnimation, tweenTime, jt::Vector2f { 2.0f, 2.0f }, jt::Vector2f { 1.0f, 1.0f });
+        tweenScale->setAgePercentConversion(
+            [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
         m_addTweenCallback(tweenScale);
 
         auto tweenAlpha = jt::TweenAlpha::create(newAnimation, tweenTime, 0u, 255u);

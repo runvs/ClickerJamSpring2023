@@ -46,8 +46,12 @@ void PurchaseButton::doCreate()
     std::vector<std::shared_ptr<jt::SoundInterface>> soundGroupSounds {};
     for (auto i = 0; i != 5; ++i) {
         std::string const fileName = "assets/sfx/pling" + std::to_string(i) + ".wav";
-        auto snd = getGame()->audio().addTemporarySound(fileName);
-        soundGroupSounds.push_back(snd);
+        for (int j = -3; j != 4; ++j) {
+            auto snd = getGame()->audio().addTemporarySound(fileName);
+            snd->setPitch(1.0f + static_cast<float>(j) / 50.0f);
+            snd->setVolume(0.75f);
+            soundGroupSounds.push_back(snd);
+        }
     }
     m_soundGroup = getGame()->audio().addTemporarySoundGroup(soundGroupSounds);
 }
