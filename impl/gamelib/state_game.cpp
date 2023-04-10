@@ -35,19 +35,21 @@ void StateGame::onCreate()
     m_background->update(0.0f);
 
     m_mine_shaft_model = std::make_shared<MineShaftModel>();
-    m_mine_shaft_area
-        = std::make_shared<MineShaftArea>(*m_mine_shaft_model.get(), [this](api::API const& value) {
-              m_bank->receiveMoney(value);
-              getGame()->gfx().camera().shake(0.1f, 3.0f);
-              m_sparks->fire(
-                  10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
-              m_sparks->fire(
-                  10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
-              m_sparks->fire(
-                  10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+    m_mine_shaft_area = std::make_shared<MineShaftArea>(
+        *m_mine_shaft_model.get(),
+        [this](api::API const& value) {
+            m_bank->receiveMoney(value);
+            getGame()->gfx().camera().shake(0.1f, 2.0f);
+            m_sparks->fire(
+                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+            m_sparks->fire(
+                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+            m_sparks->fire(
+                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
 
-              m_digSound->play();
-          });
+            m_digSound->play();
+        },
+        [this](auto tween) { add(tween); });
     add(m_mine_shaft_area);
 
     createPlayer();

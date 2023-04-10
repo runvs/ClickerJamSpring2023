@@ -1,40 +1,22 @@
 
 #include "rock_layer.hpp"
-#include "input/mouse/mouse_defines.hpp"
-#include "shape.hpp"
+#include <ease/expo.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
+#include <input/mouse/mouse_defines.hpp>
 #include <random/random.hpp>
+#include <shape.hpp>
+#include <tweens/tween_scale.hpp>
 
-RockLayer::RockLayer(int hardness, jt::Color const& color, float initialLayerOffset, bool isSky)
+RockLayer::RockLayer(int hardness, jt::Color const& color, float initialLayerOffset,
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback, bool isSky)
     : m_hardness { hardness }
     , m_color { color }
     , m_progress { 0 }
     , m_layer_offset { initialLayerOffset }
     , m_isSky { isSky }
+    , m_addTweenCallback { addTweenCallback }
 {
-}
-
-void RockLayer::progressAmount(int progress)
-{
-    if (isMined()) {
-        return;
-    };
-    flash();
-    m_progress += progress;
-    getGame()->logger().debug("active layer progress is now: " + std::to_string(m_progress) + "/"
-        + std::to_string(m_hardness));
-}
-
-bool RockLayer::isMined() const { return m_progress > m_hardness; }
-
-void RockLayer::ascend()
-{
-    m_layer_offset -= 1;
-    m_shapeMiddle->setPosition(
-        { m_shapeMiddle->getPosition().x, GP::HudMineShaftLayerSize().y * m_layer_offset });
-    m_shapeBackground->setPosition(
-        { GP::HudMineShaftOffset().x, GP::HudMineShaftLayerSize().y * m_layer_offset });
 }
 
 void RockLayer::doCreate()
@@ -46,12 +28,15 @@ void RockLayer::doCreate()
     m_spriteRocks = std::make_shared<jt::Sprite>("assets/rocks.png", textureManager());
     m_spriteRocks->setColor(m_color);
 
-    m_shapeMiddle = std::make_shared<jt::Shape>();
-    m_shapeMiddle->makeRect({ GP::HudMineShaftLayerSize().x - widthModifier - x_offset_left - 8.0f,
-                                GP::HudMineShaftLayerSize().y },
-        textureManager());
-    m_shapeMiddle->setPosition({ GP::HudMineShaftOffset().x + x_offset_left, y_offset });
-    m_shapeMiddle->setColor(jt::Color { 0u, 0u, 0u, 210u });
+    m_shapeMinedOverlay = std::make_shared<jt::Shape>();
+    jt::Vector2f const minedOverlaySize { GP::HudMineShaftLayerSize().x - widthModifier
+            - x_offset_left - 8.0f,
+        GP::HudMineShaftLayerSize().y };
+    m_shapeMinedOverlay->makeRect(minedOverlaySize, textureManager());
+    m_shapeMinedOverlay->setPosition({ GP::HudMineShaftOffset().x + x_offset_left, y_offset });
+    m_shapeMinedOverlay->setColor(jt::Color { 0u, 0u, 0u, 210u });
+    m_shapeMinedOverlay->setOrigin(jt::Vector2f { minedOverlaySize.x / 2.0f, 0.0f });
+    m_shapeMinedOverlay->setOffset(jt::Vector2f { minedOverlaySize.x / 2.0f, 0.0f });
 
     m_shapeBackground = std::make_shared<jt::Shape>();
     m_shapeBackground->makeRect(GP::HudMineShaftLayerSize(), textureManager());
@@ -64,7 +49,7 @@ void RockLayer::doCreate()
 void RockLayer::doUpdate(const float elapsed)
 {
     m_spriteRocks->update(elapsed);
-    m_shapeMiddle->update(elapsed);
+    m_shapeMinedOverlay->update(elapsed);
     m_shapeBackground->update(elapsed);
 }
 
@@ -83,9 +68,38 @@ void RockLayer::doDraw() const
     }
 
     if (isMined()) {
-        m_shapeMiddle->draw(renderTarget());
+        m_shapeMinedOverlay->draw(renderTarget());
     }
 }
 
+void RockLayer::progressAmount(int progress)
+{
+    if (isMined()) {
+        return;
+    };
+    flash();
+    m_progress += progress;
+    if (isMined()) {
+        auto tweenScale = jt::TweenScale::create(
+            m_shapeMinedOverlay, 0.5f, jt::Vector2f { 1.0f, 0.0f }, jt::Vector2f { 1.0f, 1.0f });
+        tweenScale->setAgePercentConversion(
+            [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+        m_addTweenCallback(tweenScale);
+    }
+    getGame()->logger().debug("active layer progress is now: " + std::to_string(m_progress) + "/"
+        + std::to_string(m_hardness));
+}
+
+bool RockLayer::isMined() const { return m_progress > m_hardness; }
+
+void RockLayer::ascend()
+{
+    m_layer_offset -= 1;
+    m_shapeMinedOverlay->setPosition(
+        { m_shapeMinedOverlay->getPosition().x, GP::HudMineShaftLayerSize().y * m_layer_offset });
+    m_shapeBackground->setPosition(
+        { GP::HudMineShaftOffset().x, GP::HudMineShaftLayerSize().y * m_layer_offset });
+}
+
 void RockLayer::flash() { m_spriteRocks->flash(0.2f, jt::Color { 255, 255, 255, 100 }); }
-jt::Rectf RockLayer::getArea() const { return m_shapeMiddle->getGlobalBounds(); }
+jt::Rectf RockLayer::getArea() const { return m_shapeMinedOverlay->getGlobalBounds(); }

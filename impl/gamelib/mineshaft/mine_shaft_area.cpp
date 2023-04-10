@@ -6,9 +6,11 @@
 #include <math_helper.hpp>
 #include <random/random.hpp>
 
-MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback)
+MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback,
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
     : m_callback { callback }
     , m_mine_shaft_model { model }
+    , m_addTweenCallback { addTweenCallback }
 {
 }
 void MineShaftArea::doCreate()
@@ -19,7 +21,7 @@ void MineShaftArea::doCreate()
     m_background_shape->setColor(jt::colors::Black);
     m_background_shape->update(1.0f);
 
-    std::uint8_t active_layer_index = m_rock_layers.capacity() / 2;
+    std::size_t active_layer_index = m_rock_layers.capacity() / 2;
     for (auto i = 0u; i != m_rock_layers.capacity(); i++) {
         jt::Color color;
         auto isSky = false;
@@ -35,12 +37,15 @@ void MineShaftArea::doCreate()
         } else {
             color = jt::Color { 112u, 128u, 144u };
         }
-        auto layer = std::make_shared<RockLayer>(
-            jt::Random::getInt(1, static_cast<int>(i) + 2), color, static_cast<float>(i), isSky);
+        auto layer = std::make_shared<RockLayer>(jt::Random::getInt(1, static_cast<int>(i) + 2),
+            color, static_cast<float>(i), m_addTweenCallback, isSky);
         m_rock_layers[i] = (layer);
         layer->setGameInstance(getGame());
         layer->create();
     }
+
+    m_descentSound = getGame()->audio().addTemporarySound("assets/sfx/mined1.wav");
+    m_descentSound->setVolume(0.5f);
 }
 void MineShaftArea::doUpdate(const float elapsed)
 {
@@ -110,12 +115,17 @@ void MineShaftArea::cycleLayers()
     std::stringstream ss;
     ss << "Create rock layer with color " << col << " and hardness " << hardness;
     getGame()->logger().info(ss.str());
-    auto new_layer = std::make_shared<RockLayer>(hardness, col, 16.0f);
+    auto new_layer = std::make_shared<RockLayer>(hardness, col, 16.0f, m_addTweenCallback);
     new_layer->setGameInstance(getGame());
     new_layer->create();
     m_rock_layers.put(new_layer);
 }
 
-void MineShaftArea::descend() { m_mine_shaft_model.descend(); }
+void MineShaftArea::descend()
+{
+    m_mine_shaft_model.descend();
+    m_descentSound->play();
+    getGame()->gfx().camera().shake(0.6f, 7.0f);
+}
 
 void MineShaftArea::flashActiveLayer() { getActiveLayer()->flash(); }

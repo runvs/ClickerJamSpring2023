@@ -2,15 +2,19 @@
 #ifndef CLICKERJAMSPRING2023_ROCK_TILE_HPP
 #define CLICKERJAMSPRING2023_ROCK_TILE_HPP
 
-#include "shape.hpp"
 #include <arbitrary_precision_int/arbitrary_precision_int.hpp>
 #include <color/color.hpp>
 #include <game_object.hpp>
+#include <shape.hpp>
 #include <sprite.hpp>
+#include <tweens/tween_interface.hpp>
+#include <functional>
 
 class RockLayer : public jt::GameObject {
 public:
-    RockLayer(int hardness, jt::Color const& color, float initialLayerOffset, bool isSky = false);
+    RockLayer(int hardness, jt::Color const& color, float initialLayerOffset,
+        std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback,
+        bool isSky = false);
 
     void progressAmount(int progress);
 
@@ -32,14 +36,13 @@ private:
 
     bool m_isSky;
 
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> m_addTweenCallback;
+
     std::shared_ptr<jt::Sprite> m_spriteRocks;
     std::shared_ptr<jt::Shape> m_shapeBackground;
-    std::shared_ptr<jt::Shape> m_shapeMiddle;
+    std::shared_ptr<jt::Shape> m_shapeMinedOverlay;
 
     std::function<void(api::API const&)> m_callback;
-
-    // TODO: replace color with sprite
-    // mutable std::shared_ptr<jt::Sprite> m_sprite;
 };
 
 #endif // CLICKERJAMSPRING2023_ROCK_TILE_HPP
