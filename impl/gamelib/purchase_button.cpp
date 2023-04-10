@@ -63,6 +63,9 @@ void PurchaseButton::purchaseAction()
     updateText();
     m_button->getBackground()->flash(0.2f, jt::Color { 255, 255, 255, 150 });
     m_soundGroup->play();
+
+    m_wiggleTimer = 0.0f;
+    m_isInWiggle = true;
 }
 
 void PurchaseButton::doUpdate(float const elapsed)
@@ -118,6 +121,20 @@ void PurchaseButton::doUpdate(float const elapsed)
     } else {
         m_buttonAnimation->setColor(jt::colors::Gray);
         m_buttonText->setColor(jt::colors::Gray);
+    }
+
+    if (m_isInWiggle) {
+        m_wiggleTimer += elapsed;
+
+        float const sinPart = sin(m_wiggleTimer * 35.0f);
+        float const decayPart = 1.0f - m_wiggleTimer / m_wiggleTimerMax;
+
+        float const value = 1.0f + 0.2f * sinPart * decayPart;
+        m_button->getBackground()->setScale({ value, 1.0f });
+        if (m_wiggleTimer > m_wiggleTimerMax) {
+            m_isInWiggle = false;
+            m_button->getBackground()->setScale({ 1.0f, 1.0f });
+        }
     }
 }
 

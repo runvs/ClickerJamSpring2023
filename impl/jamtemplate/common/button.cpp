@@ -19,6 +19,8 @@ jt::Button::Button(jt::Vector2u const& size, jt::TextureManagerInterface& textur
     m_background->add(buttonImageName, "down", size, { 2 }, 1, textureManager);
     m_background->play("normal");
     m_background->setIgnoreCamMovement(true);
+    m_background->setOrigin(jt::OriginMode::CENTER);
+    m_background->setOffset(jt::Vector2f { size.x / 2.0f, size.y / 2.0f });
 
     m_disabledOverlay = std::make_shared<jt::Sprite>(
         "#f#" + std::to_string(size.x) + "#" + std::to_string(size.y), textureManager);

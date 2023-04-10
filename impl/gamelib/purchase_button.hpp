@@ -9,13 +9,14 @@
 #include <game_object.hpp>
 #include <purchase_info.hpp>
 #include <text.hpp>
-#include <memory>
-#include <functional>
 #include <tweens/tween_interface.hpp>
+#include <functional>
+#include <memory>
 
 class PurchaseButton : public ::jt::GameObject {
 public:
-    PurchaseButton(BankInterface& finances, PurchaseInfo const& info, std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
+    PurchaseButton(BankInterface& finances, PurchaseInfo const& info,
+        std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
 
     api::API getPrice() const;
     void setPrice(api::API const& price);
@@ -43,8 +44,9 @@ private:
 
     api::API m_cost;
 
-
-
+    float m_wiggleTimer = 0.0f;
+    float m_wiggleTimerMax = 0.4f;
+    bool m_isInWiggle = false;
 
     bool m_canPurchase { false };
     bool m_hasBeenShown { false };
