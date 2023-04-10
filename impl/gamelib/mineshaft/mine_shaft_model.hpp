@@ -7,7 +7,8 @@ class MineShaftModel {
 public:
     MineShaftModel();
 
-    api::API getCurrentDepth();
+    api::API getCurrentDepth() const;
+    void setCurrentDepth(api::API const& depth);
     int getNumberOfMinedLayers();
     void addMinedLayer(int amount = 1);
     void descend();

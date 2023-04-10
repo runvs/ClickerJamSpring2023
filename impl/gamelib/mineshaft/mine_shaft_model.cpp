@@ -8,7 +8,7 @@ MineShaftModel::MineShaftModel()
     m_number_of_layers_mined = 0;
 }
 
-api::API MineShaftModel::getCurrentDepth() { return m_current_depth; }
+api::API MineShaftModel::getCurrentDepth() const { return m_current_depth; }
 
 void MineShaftModel::descend()
 {
@@ -19,9 +19,6 @@ void MineShaftModel::descend()
 
 int MineShaftModel::getNumberOfMinedLayers() { return m_number_of_layers_mined; }
 
-void MineShaftModel::addMinedLayer(int amount)
-{
-    m_number_of_layers_mined += amount;
-    //    std::cout << "Number of mined layers increased by " << amount << " and is now "
-    //              << m_number_of_layers_mined << std::endl;
-}
+void MineShaftModel::addMinedLayer(int amount) { m_number_of_layers_mined += amount; }
+
+void MineShaftModel::setCurrentDepth(const api::API& depth) { m_current_depth = depth; }

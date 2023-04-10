@@ -329,6 +329,7 @@ std::string StateGame::serialize() const
     j["buttons"] = buttonPrices;
     j["bank"] = *m_bank;
     j["purchased"] = *m_purchasedObjects;
+    j["depth"] = m_mine_shaft_model->getCurrentDepth();
     return j.dump();
 }
 
@@ -354,6 +355,10 @@ void StateGame::deserialize(std::string const& str)
             m_purchasedObjects->addObject(kvp.key());
         }
     }
+
+    api::API depth;
+    j["depth"].get_to(depth);
+    m_mine_shaft_model->setCurrentDepth(depth);
 }
 void StateGame::save()
 {
