@@ -18,6 +18,8 @@ public:
     void ascend();
     void flash();
 
+    jt::Rectf getArea() const;
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;

@@ -39,14 +39,13 @@ void StateGame::onCreate()
         = std::make_shared<MineShaftArea>(*m_mine_shaft_model.get(), [this](api::API const& value) {
               m_bank->receiveMoney(value);
               getGame()->gfx().camera().shake(0.1f, 3.0f);
+              m_sparks->fire(
+                  10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+              m_sparks->fire(
+                  10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+              m_sparks->fire(
+                  10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
 
-              auto const isMouseInMineArea = (jt::MathHelper::checkIsIn(
-                  { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
-                      GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
-                  getGame()->input().mouse()->getMousePositionScreen()));
-              if(isMouseInMineArea) {
-                  m_sparks->fire(10, getGame()->input().mouse()->getMousePositionScreen());
-              }
               m_digSound->play();
           });
     add(m_mine_shaft_area);
@@ -252,6 +251,7 @@ void StateGame::onUpdate(float const elapsed)
     if (m_running) {
         // update game logic here
 
+        // TODO think about updating hud only when values actually change
         m_hud->getDepthScore()->notify(m_mine_shaft_model->getCurrentDepth());
         m_hud->getMoneyScore()->notify(m_bank->getCurrentMoney());
         m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerSecond());

@@ -84,3 +84,4 @@ void RockLayer::doDraw() const
 }
 
 void RockLayer::flash() { m_shape_middle->flash(0.2f, jt::Color { 255, 255, 255, 100 }); }
+jt::Rectf RockLayer::getArea() const { return m_shape_middle->getGlobalBounds(); }

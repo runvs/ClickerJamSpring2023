@@ -22,6 +22,6 @@ int MineShaftModel::getNumberOfMinedLayers() { return m_number_of_layers_mined; 
 void MineShaftModel::addMinedLayer(int amount)
 {
     m_number_of_layers_mined += amount;
-    std::cout << "Number of mined layers increased by " << amount << " and is now "
-              << m_number_of_layers_mined << std::endl;
+    //    std::cout << "Number of mined layers increased by " << amount << " and is now "
+    //              << m_number_of_layers_mined << std::endl;
 }
