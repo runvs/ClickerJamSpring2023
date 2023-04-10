@@ -55,6 +55,7 @@ private:
 
     std::shared_ptr<jt::ParticleSystem<jt::Shape, 100>> m_sparks;
 
+    std::shared_ptr<jt::Button> m_btnSave;
     std::shared_ptr<jt::Button> m_btnLoad;
     bool m_running { true };
     bool m_hasEnded { false };

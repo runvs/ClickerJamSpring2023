@@ -197,14 +197,14 @@ void StateGame::onCreate()
     add(m_vignette);
 
     {
-        auto btnSave = std::make_shared<jt::Button>(
+        m_btnSave = std::make_shared<jt::Button>(
             jt::Vector2u { GP::HudButtonSize().x / 2, GP::HudButtonSize().y }, textureManager());
         auto textSave = jt::dh::createText(renderTarget(), " Save", 16);
         textSave->setTextAlign(jt::Text::TextAlign::LEFT);
-        btnSave->setDrawable(textSave);
-        btnSave->setPosition({ 0, GP::GetScreenSize().y - GP::HudButtonSize().y });
-        btnSave->addCallback([this]() { save(); });
-        add(btnSave);
+        m_btnSave->setDrawable(textSave);
+        m_btnSave->setPosition({ 0, GP::GetScreenSize().y - GP::HudButtonSize().y });
+        m_btnSave->addCallback([this]() { save(); });
+        add(m_btnSave);
     }
     {
         m_btnLoad = std::make_shared<jt::Button>(
@@ -296,6 +296,8 @@ void StateGame::onDraw() const
     drawObjects();
     m_sparks->draw();
     m_vignette->draw();
+    m_btnSave->draw();
+    m_btnLoad->draw();
     m_hud->draw();
     m_mousePointer->draw();
 }
