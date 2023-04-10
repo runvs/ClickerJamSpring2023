@@ -7,8 +7,8 @@
 #include <random/random.hpp>
 
 MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback)
-    : m_mine_shaft_model { model }
-    , m_callback { callback }
+    : m_callback { callback }
+    , m_mine_shaft_model { model }
 {
 }
 void MineShaftArea::doCreate()

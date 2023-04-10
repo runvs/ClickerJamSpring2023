@@ -10,7 +10,7 @@
 
 class RockLayer : public jt::GameObject {
 public:
-    RockLayer(const int hardness, const jt::Color color, const float initial_layer_offset);
+    RockLayer(int hardness, jt::Color const& color, float initial_layer_offset);
 
     void progressAmount(int progress);
 
@@ -24,6 +24,7 @@ private:
     void doDraw() const override;
 
     int m_hardness;
+    jt::Color m_color;
     int m_progress;
     float m_layer_offset;
 
@@ -34,7 +35,6 @@ private:
     std::function<void(api::API const&)> m_callback;
 
     // TODO: replace color with sprite
-    jt::Color m_color;
     // mutable std::shared_ptr<jt::Sprite> m_sprite;
 };
 

@@ -24,9 +24,9 @@ private:
     void doDraw() const override;
 
     std::function<void(api::API const&)> m_callback;
-    std::shared_ptr<jt::Shape> m_background_shape;
     MineShaftModel& m_mine_shaft_model;
-    mutable jt::CircularBuffer<std::shared_ptr<RockLayer>, 17> m_rock_layers;
+    std::shared_ptr<jt::Shape> m_background_shape;
+    jt::CircularBuffer<std::shared_ptr<RockLayer>, 17> m_rock_layers;
 
     void handleMouseClicks();
     void cycleLayers();

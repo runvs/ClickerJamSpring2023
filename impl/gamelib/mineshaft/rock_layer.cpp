@@ -6,12 +6,12 @@
 #include <game_properties.hpp>
 #include <random/random.hpp>
 
-RockLayer::RockLayer(const int hardness, const jt::Color color, const float initial_layer_offset)
+RockLayer::RockLayer(int hardness, jt::Color const& color, float initial_layer_offset)
     : m_hardness { hardness }
     , m_color { color }
+    , m_progress { 0 }
     , m_layer_offset { initial_layer_offset }
 {
-    m_progress = 0;
 }
 
 void RockLayer::progressAmount(int progress)
@@ -19,9 +19,10 @@ void RockLayer::progressAmount(int progress)
     if (isMined()) {
         return;
     };
-
+    flash();
     m_progress += progress;
-    std::cout << "active layer progress is now: " << m_progress << "/" << m_hardness << std::endl;
+    getGame()->logger().debug("active layer progress is now: " + std::to_string(m_progress) + "/"
+        + std::to_string(m_hardness));
 }
 
 bool RockLayer::isMined() { return m_progress > m_hardness; }
@@ -44,9 +45,9 @@ void RockLayer::ascend()
 
 void RockLayer::doCreate()
 {
-    float y_offset = GP::HudMineShaftLayerSize().y * m_layer_offset;
-    float x_offset_left = static_cast<float>(jt::Random::getInt(3, 9));
-    float x_offset_right = static_cast<float>(jt::Random::getInt(3, 9));
+    float const y_offset = GP::HudMineShaftLayerSize().y * m_layer_offset;
+    float const x_offset_left = static_cast<float>(jt::Random::getInt(3, 9));
+    float const x_offset_right = static_cast<float>(jt::Random::getInt(3, 9));
 
     m_shape_left = std::make_shared<jt::Shape>();
     m_shape_left->makeRect({ x_offset_left, GP::HudMineShaftLayerSize().y }, textureManager());
@@ -65,11 +66,7 @@ void RockLayer::doCreate()
     m_shape_middle->setPosition({ GP::HudMineShaftOffset().x, y_offset });
     m_shape_middle->setColor(m_color);
 
-    m_shape_left->update(1.0f);
-    m_shape_right->update(1.0f);
-    m_shape_middle->update(1.0f);
-
-    std::cout << "new layer with hardness " << m_hardness << " created" << std::endl;
+    getGame()->logger().info("new layer with hardness " + std::to_string(m_hardness) + " created");
 }
 
 void RockLayer::doUpdate(const float elapsed)
@@ -85,4 +82,5 @@ void RockLayer::doDraw() const
     m_shape_right->draw(renderTarget());
     m_shape_middle->draw(renderTarget());
 }
-void RockLayer::flash() { m_shape_middle->flash(0.2f); }
+
+void RockLayer::flash() { m_shape_middle->flash(0.2f, jt::Color { 255, 255, 255, 100 }); }
