@@ -1,5 +1,6 @@
 #include "purchase_button.hpp"
 #include <drawable_helpers.hpp>
+#include <ease/expo.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
@@ -76,21 +77,29 @@ void PurchaseButton::doUpdate(float const elapsed)
             m_hasBeenShown = true;
 
             float const tweenTime = 0.35f;
-            m_addTweenCallback(jt::TweenPosition::create(m_button->getBackground(), tweenTime,
+            auto tw1 = jt::TweenPosition::create(m_button->getBackground(), tweenTime,
                 m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
-                m_button->getPosition()));
+                m_button->getPosition());
+            tw1->setAgePercentConversion(
+                [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+            m_addTweenCallback(tw1);
 
-            m_addTweenCallback(jt::TweenPosition::create(m_button->getDrawable(), tweenTime,
+            auto tw2 = jt::TweenPosition::create(m_button->getDrawable(), tweenTime,
                 m_button->getDrawable()->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
-                m_button->getDrawable()->getPosition()));
+                m_button->getDrawable()->getPosition());
+            tw2->setAgePercentConversion(
+                [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+            m_addTweenCallback(tw2);
 
-            auto tw = jt::TweenPosition::create(m_buttonAnimation, tweenTime,
+            auto tw3 = jt::TweenPosition::create(m_buttonAnimation, tweenTime,
                 m_buttonAnimation->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
                 m_buttonAnimation->getPosition());
-            tw->addCompleteCallback([button = this->m_button]() {
+            tw3->addCompleteCallback([button = this->m_button]() {
                 button->getBackground()->flash(0.35f, jt::colors::Green);
             });
-            m_addTweenCallback(tw);
+            tw3->setAgePercentConversion(
+                [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+            m_addTweenCallback(tw3);
         }
     }
     m_button->update(elapsed);
