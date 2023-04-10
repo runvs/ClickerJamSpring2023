@@ -14,7 +14,7 @@ public:
 
     void progressAmount(int progress);
 
-    bool isMined();
+    bool isMined() const;
     void ascend();
     void flash();
 
@@ -30,9 +30,8 @@ private:
     int m_progress;
     float m_layer_offset;
 
-    std::shared_ptr<jt::Shape> m_shape_left;
+    std::shared_ptr<jt::Sprite> m_rocks;
     std::shared_ptr<jt::Shape> m_shape_middle;
-    std::shared_ptr<jt::Shape> m_shape_right;
 
     std::function<void(api::API const&)> m_callback;
 
