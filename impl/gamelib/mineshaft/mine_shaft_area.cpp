@@ -97,16 +97,18 @@ void MineShaftArea::cycleLayers()
         }
         layer->ascend();
     }
-    auto r = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
-    auto g = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
-    auto b = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+
+    auto const r = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+    auto const g = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+    auto const b = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
     auto min = static_cast<int>(m_mine_shaft_model.getNumberOfMinedLayers() / 2) + 1;
     auto max = m_mine_shaft_model.getNumberOfMinedLayers() + 5;
     auto hardness = jt::Random::getInt(min, max);
-    std::cout << "Creating layer with rgb colors {" << static_cast<int>(r) << ", "
-              << static_cast<int>(g) << ", " << static_cast<int>(b) << "} and hardness " << hardness
-              << " from range " << min << "-" << max << std::endl;
-    auto new_layer = std::make_shared<RockLayer>(hardness, jt::Color({ r, g, b }), 16.0f);
+    jt::Color const col { r, g, b };
+    std::stringstream ss;
+    ss << "Create rock layer with color " << col << " and hardness " << hardness;
+    getGame()->logger().info(ss.str());
+    auto new_layer = std::make_shared<RockLayer>(hardness, col, 16.0f);
     new_layer->setGameInstance(getGame());
     new_layer->create();
     m_rock_layers.put(new_layer);
