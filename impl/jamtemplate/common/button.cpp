@@ -50,7 +50,14 @@ bool jt::Button::isMouseOver()
 }
 void jt::Button::setVisible(bool isVisible) { m_isVisible = isVisible; }
 bool jt::Button::getVisible() const { return m_isVisible; }
-void jt::Button::setPosition(jt::Vector2f const& newPosition) { m_pos = newPosition; }
+void jt::Button::setPosition(jt::Vector2f const& newPosition)
+{
+    m_pos = newPosition;
+    m_background->setPosition(m_pos);
+    if (m_drawable) {
+        m_drawable->setPosition(m_pos);
+    }
+}
 jt::Vector2f jt::Button::getPosition() const { return m_pos; }
 void jt::Button::doDraw() const
 {
@@ -86,7 +93,6 @@ bool jt::Button::isOver(jt::Vector2f const& mousePosition)
 void jt::Button::doUpdate(float elapsed)
 {
     if (m_drawable) {
-        m_drawable->setPosition(m_pos);
         m_drawable->update(elapsed);
     }
 
@@ -108,13 +114,14 @@ void jt::Button::doUpdate(float elapsed)
     } else {
         m_background->play("normal");
     }
-    m_disabledOverlay->setPosition((m_pos));
+
     m_disabledOverlay->update(elapsed);
 
-    m_background->setPosition(m_pos);
+    m_disabledOverlay->setPosition(m_background->getPosition());
     m_background->update(elapsed);
 }
 bool jt::Button::getActive() const { return m_isActive; }
 void jt::Button::setActive(bool isActive) { m_isActive = isActive; }
 
 std::shared_ptr<jt::DrawableInterface> jt::Button::getBackground() { return m_background; }
+std::shared_ptr<jt::DrawableInterface> jt::Button::getDrawable() const { return m_drawable; }

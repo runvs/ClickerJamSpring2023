@@ -29,6 +29,10 @@ public:
     /// \param drawable the drawable to be used
     void setDrawable(std::shared_ptr<DrawableInterface> drawable);
 
+    /// Get the drawable (e.g. the icon or text of the button)
+    /// \return the drawable. Cann be null if no drawable was set
+    std::shared_ptr<jt::DrawableInterface> getDrawable() const;
+
     /// Add a callback to be invoked when the button is clicked
     /// \param callback the callback to be added
     void addCallback(std::function<void(void)> const& callback);

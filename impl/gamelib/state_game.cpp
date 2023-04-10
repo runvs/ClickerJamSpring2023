@@ -183,7 +183,8 @@ void StateGame::onCreate()
     // automatically fill index member variable
     for (auto i = 0u; i != purchaseInfos.size(); ++i) {
         purchaseInfos[i].index = static_cast<int>(i);
-        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), purchaseInfos[i]);
+        auto button = std::make_shared<PurchaseButton>(*m_bank.get(), purchaseInfos[i],
+            [this](std::shared_ptr<jt::TweenInterface> tween) { add(tween); });
         m_purchaseButtons->push_back(button);
         add(button);
     }

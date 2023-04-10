@@ -10,10 +10,12 @@
 #include <purchase_info.hpp>
 #include <text.hpp>
 #include <memory>
+#include <functional>
+#include <tweens/tween_interface.hpp>
 
 class PurchaseButton : public ::jt::GameObject {
 public:
-    PurchaseButton(BankInterface& finances, PurchaseInfo const& info);
+    PurchaseButton(BankInterface& finances, PurchaseInfo const& info, std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
 
     api::API getPrice() const;
     void setPrice(api::API const& price);
@@ -29,21 +31,26 @@ private:
 
     void updateText();
 
+    void purchaseAction();
+
+    BankInterface& m_bank;
+    PurchaseInfo m_purchaseInfo;
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> m_addTweenCallback;
+
     std::shared_ptr<jt::Button> m_button;
     std::shared_ptr<jt::Text> m_buttonText;
     std::shared_ptr<jt::Animation> m_buttonAnimation;
 
     api::API m_cost;
-    BankInterface& m_bank;
 
-    PurchaseInfo m_purchaseInfo;
+
+
 
     bool m_canPurchase { false };
     bool m_hasBeenShown { false };
     std::shared_ptr<jt::SoundInterface> m_soundGroup;
 
     jt::Rectf m_mouseOverRect;
-    void purchaseAction();
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASE_BUTTON_HPP

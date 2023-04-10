@@ -4,11 +4,14 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <strutils.hpp>
-#include "imgui.h"
+#include <tweens/tween_position.hpp>
+#include <imgui.h>
 
-PurchaseButton::PurchaseButton(BankInterface& finances, PurchaseInfo const& info)
+PurchaseButton::PurchaseButton(BankInterface& finances, PurchaseInfo const& info,
+    std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
     : m_bank { finances }
     , m_purchaseInfo { info }
+    , m_addTweenCallback { addTweenCallback }
 {
 }
 
@@ -36,6 +39,8 @@ void PurchaseButton::doCreate()
     m_buttonAnimation = std::make_shared<jt::Animation>();
     m_buttonAnimation->loadFromJson(m_purchaseInfo.animationFile, textureManager());
     m_buttonAnimation->play(m_purchaseInfo.animationNameMenu);
+    m_buttonAnimation->setOffset({ -8, -14 });
+    m_buttonAnimation->setPosition(m_buttonText->getPosition());
 
     std::vector<std::shared_ptr<jt::SoundInterface>> soundGroupSounds {};
     for (auto i = 0; i != 5; ++i) {
@@ -69,14 +74,27 @@ void PurchaseButton::doUpdate(float const elapsed)
 
         if (api::compare(m_bank.getCurrentMoney(), showAt) >= 0) {
             m_hasBeenShown = true;
-            m_button->getBackground()->flash(0.4f, jt::colors::Green);
+
+            float const tweenTime = 0.35f;
+            m_addTweenCallback(jt::TweenPosition::create(m_button->getBackground(), tweenTime,
+                m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
+                m_button->getPosition()));
+
+            m_addTweenCallback(jt::TweenPosition::create(m_button->getDrawable(), tweenTime,
+                m_button->getDrawable()->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
+                m_button->getDrawable()->getPosition()));
+
+            auto tw = jt::TweenPosition::create(m_buttonAnimation, tweenTime,
+                m_buttonAnimation->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
+                m_buttonAnimation->getPosition());
+            tw->addCompleteCallback([button = this->m_button]() {
+                button->getBackground()->flash(0.35f, jt::colors::Green);
+            });
+            m_addTweenCallback(tw);
         }
     }
     m_button->update(elapsed);
     m_buttonText->update(elapsed);
-
-    m_buttonAnimation->setOffset({ -8, -14 });
-    m_buttonAnimation->setPosition(m_buttonText->getPosition());
     m_buttonAnimation->update(elapsed);
 
     m_canPurchase = m_bank.canAffordAmount(m_cost);
