@@ -107,6 +107,14 @@ void PurchaseButton::doUpdate(float const elapsed)
             tw3->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
             m_addTweenCallback(tw3);
+
+            m_button->setPosition(
+                m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f });
+            m_button->update(0.0f);
+
+            m_buttonAnimation->setPosition(
+                m_buttonAnimation->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f });
+            m_buttonAnimation->update(0.0f);
         }
     }
     m_button->update(elapsed);
