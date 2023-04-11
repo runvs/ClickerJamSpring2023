@@ -1,7 +1,7 @@
 
 #include "mine_shaft_model.hpp"
 #include <game_properties.hpp>
-#include <iostream>
+#include <limits>
 
 MineShaftModel::MineShaftModel()
 {
