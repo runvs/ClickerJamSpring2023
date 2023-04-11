@@ -40,13 +40,13 @@ void Hud::doCreate()
     m_depthText = std::make_shared<jt::Text>();
     m_depthText = jt::dh::createText(renderTarget(), "", 16, jt::Color { 192, 194, 201 });
     m_depthText->setTextAlign(jt::Text::TextAlign::LEFT);
-    m_depthText->setPosition({ GP::HudMineShaftOffset().x + 10.0f, -2.0f });
+    m_depthText->setPosition({ GP::HudMineShaftOffset().x + 16.0f, -2.0f });
     m_depthDisplay = std::make_shared<DepthDisplay>(m_depthText, "Depth: -");
 
     m_moneyPerClickText = std::make_shared<jt::Text>();
     m_moneyPerClickText = jt::dh::createText(renderTarget(), "", 16, jt::Color { 192, 194, 201 });
     m_moneyPerClickText->setTextAlign(jt::Text::TextAlign::LEFT);
-    m_moneyPerClickText->setPosition({ GP::HudMineShaftOffset().x + 10.0f, 14.0f });
+    m_moneyPerClickText->setPosition({ GP::HudMineShaftOffset().x + 16.0f, 14.0f });
     m_moneyPerClickDisplay
         = std::make_shared<MoneyDisplay>(m_moneyPerClickText, "Per Click: ", "$");
 }

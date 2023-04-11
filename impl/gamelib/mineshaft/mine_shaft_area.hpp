@@ -28,6 +28,8 @@ public:
         std::shared_ptr<ObserverInterface<api::API const&>> depthObserver);
 
     void progressMining(std::uint64_t value = 1);
+    api::API getMoneyPerClick() const;
+    void setMoneyPerClick(api::API const& value);
 
 private:
     void doCreate() override;
@@ -41,10 +43,12 @@ private:
     std::function<void(std::shared_ptr<jt::TweenInterface>)> m_addTweenCallback;
 
     std::shared_ptr<jt::SoundInterface> m_descentSound;
-    api::API m_clickReturn;
+    api::API m_moneyPerClick;
 
     std::weak_ptr<ObserverInterface<api::API const&>> m_moneyPerClickObserver;
     std::weak_ptr<ObserverInterface<api::API const&>> m_depthObserver;
+
+    std::shared_ptr<jt::Shape> m_shapeOverlay;
 
     void handleMouseClicks();
     void cycleLayers();

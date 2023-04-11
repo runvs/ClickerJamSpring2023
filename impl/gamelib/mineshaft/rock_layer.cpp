@@ -22,7 +22,7 @@ RockLayer::RockLayer(std::uint64_t hardness, jt::Color const& color, float initi
 void RockLayer::doCreate()
 {
     float const y_offset = GP::HudMineShaftLayerSize().y * m_layer_offset;
-    float const x_offset_left = static_cast<float>(jt::Random::getInt(6, 12));
+    float const x_offset_left = static_cast<float>(jt::Random::getInt(10, 16));
     float const widthModifier = static_cast<float>(jt::Random::getInt(3, 9));
 
     m_spriteRocks = std::make_shared<jt::Sprite>("assets/rocks.png", textureManager());

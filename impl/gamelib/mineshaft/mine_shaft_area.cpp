@@ -20,7 +20,7 @@ MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api
     , m_mine_shaft_model { model }
     , m_addTweenCallback { addTweenCallback }
 {
-    m_clickReturn = api::from_uint64(1);
+    m_moneyPerClick = api::from_uint64(1);
 }
 void MineShaftArea::doCreate()
 {
@@ -55,6 +55,12 @@ void MineShaftArea::doCreate()
     m_descentSound = getGame()->audio().addTemporarySound("assets/sfx/mined1.wav");
     m_descentSound->setVolume(0.5f);
 
+    m_shapeOverlay = std::make_shared<jt::Shape>();
+    m_shapeOverlay->makeRect(GP::HudMineShaftLayerSize(), textureManager());
+    m_shapeOverlay->setColor(jt::colors::White);
+    m_shapeOverlay->setPosition(
+        { GP::HudMineShaftOffset().x, GP::HudMineShaftActiveLayerOffset().y + 1 });
+
     updateHudObservers();
 }
 void MineShaftArea::doUpdate(const float elapsed)
@@ -67,6 +73,10 @@ void MineShaftArea::doUpdate(const float elapsed)
         }
         layer->update(elapsed);
     }
+
+    auto const value = (sin(getAge() * 6.0f) + 1.0f) * 0.5;
+    m_shapeOverlay->setColor({ 255, 255, 255, static_cast<std::uint8_t>(255.0f * value) });
+    m_shapeOverlay->update(elapsed);
 }
 void MineShaftArea::doDraw() const
 {
@@ -78,6 +88,9 @@ void MineShaftArea::doDraw() const
         layer->draw();
     }
 
+    if (api::to_uint64(m_mine_shaft_model.getCurrentDepth()) <= 1) {
+        m_shapeOverlay->draw(renderTarget());
+    }
     drawTooltip();
 }
 
@@ -88,7 +101,8 @@ void MineShaftArea::drawTooltip() const
         ImGui::SetNextWindowPos(
             ImVec2 { mousePos.x * GP::GetZoom() + 30, mousePos.y * GP::GetZoom() });
         ImGui::SetNextWindowSize(ImVec2 { GP::HudTooltipWidth(), 50 });
-        ImGui::Begin("Rock layer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin(
+            "Rock layer. Click me!", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Progress: %lu / %lu", getCurrentLayer()->getProgress(),
             getCurrentLayer()->getHardness());
         ImGui::End();
@@ -103,7 +117,7 @@ void MineShaftArea::handleMouseClicks()
     auto const isMouseInMineArea = checkIfMouseIsOverArea();
 
     if (spaceBarJustPressed || (mouseJustPressed && isMouseInMineArea)) {
-        m_onClickCallback(m_clickReturn);
+        m_onClickCallback(m_moneyPerClick);
         progressMining();
     }
 }
@@ -166,7 +180,7 @@ void MineShaftArea::descend()
     api::API const clickReturnOffset = api::from_uint64(1u);
     api::API const levelsNeededForClickReturnIncrease
         = api::from_uint64(GP::MineShaftDepthForClickReturnIncrease());
-    m_clickReturn = m_mine_shaft_model.getCurrentDepth() / levelsNeededForClickReturnIncrease
+    m_moneyPerClick = m_mine_shaft_model.getCurrentDepth() / levelsNeededForClickReturnIncrease
         + clickReturnOffset;
     updateHudObservers();
 }
@@ -175,7 +189,7 @@ void MineShaftArea::updateHudObservers() const
     {
         auto obs = m_moneyPerClickObserver.lock();
         if (obs) {
-            obs->notify(m_clickReturn);
+            obs->notify(m_moneyPerClick);
         }
     }
 
@@ -196,3 +210,6 @@ void MineShaftArea::setDescendHudObservers(
     m_moneyPerClickObserver = moneyPerClickObserver;
     m_depthObserver = depthObserver;
 }
+
+api::API MineShaftArea::getMoneyPerClick() const { return m_moneyPerClick; }
+void MineShaftArea::setMoneyPerClick(const api::API& value) { m_moneyPerClick = value; }

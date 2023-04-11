@@ -351,6 +351,7 @@ std::string StateGame::serialize() const
     j["bank"] = *m_bank;
     j["purchased"] = *m_purchasedObjects;
     j["depth"] = m_mine_shaft_model->getCurrentDepth();
+    j["moneyPerClick"] = m_mine_shaft_area->getMoneyPerClick();
     return j.dump();
 }
 
@@ -380,6 +381,12 @@ void StateGame::deserialize(std::string const& str)
     api::API depth;
     j["depth"].get_to(depth);
     m_mine_shaft_model->setCurrentDepth(depth);
+    m_hud->getDepthObserver()->notify(depth);
+
+    api::API moneyPerClick;
+    j["moneyPerClick"].get_to(moneyPerClick);
+    m_hud->getMoneyPerClickObserver()->notify(moneyPerClick);
+    m_mine_shaft_area->setMoneyPerClick(moneyPerClick);
 }
 void StateGame::save()
 {

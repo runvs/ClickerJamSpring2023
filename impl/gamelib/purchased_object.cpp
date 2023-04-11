@@ -177,6 +177,7 @@ void PurchasedObject::clean()
     m_numberOfObjects = 0;
     m_timers.clear();
     m_animations.clear();
+    m_text->setText("");
 }
 void PurchasedObject::setProgressMiningCallback(std::function<void(std::uint64_t)> const& callback)
 {
