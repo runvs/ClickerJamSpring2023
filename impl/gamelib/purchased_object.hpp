@@ -47,6 +47,7 @@ private:
     api::API m_incomePerSecond;
     void addNewAnimation();
     void updateAutomaticMining(float const elapsed);
+    float m_miningTimerSpeedFactor { 1.0f };
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECT_HPP

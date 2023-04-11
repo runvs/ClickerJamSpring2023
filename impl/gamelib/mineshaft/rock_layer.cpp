@@ -103,3 +103,5 @@ void RockLayer::ascend()
 
 void RockLayer::flash() { m_spriteRocks->flash(0.2f, jt::Color { 255, 255, 255, 100 }); }
 jt::Rectf RockLayer::getArea() const { return m_shapeMinedOverlay->getGlobalBounds(); }
+std::uint64_t RockLayer::getHardness() const { return m_hardness; }
+std::uint64_t RockLayer::getProgress() const { return m_progress; }

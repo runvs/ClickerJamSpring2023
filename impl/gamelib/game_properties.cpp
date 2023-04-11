@@ -67,3 +67,4 @@ uint64_t GP::MineShaftDepthForClickReturnIncrease() { return 150; }
 uint64_t GP::MineShaftLevelForHardnessIncrease() { return 4u; }
 uint64_t GP::MineShaftDepthPerLayer() { return 15u; }
 float GP::PurchasedSpeedIncreasePerLine() { return 0.1f; }
+float GP::HudTooltipWidth() { return 242; }

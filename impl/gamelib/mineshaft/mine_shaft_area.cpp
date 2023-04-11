@@ -1,10 +1,10 @@
-
 #include "mine_shaft_area.hpp"
 #include "input/mouse/mouse_defines.hpp"
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <random/random.hpp>
+#include <imgui.h>
 
 MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback,
     std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
@@ -70,6 +70,22 @@ void MineShaftArea::doDraw() const
         }
         layer->draw();
     }
+
+    drawTooltip();
+}
+
+void MineShaftArea::drawTooltip() const
+{
+    if (checkIfMouseIsOverArea()) {
+        auto const mousePos = getGame()->input().mouse()->getMousePositionScreen();
+        ImGui::SetNextWindowPos(
+            ImVec2 { mousePos.x * GP::GetZoom() + 30, mousePos.y * GP::GetZoom() });
+        ImGui::SetNextWindowSize(ImVec2 { GP::HudTooltipWidth(), 50 });
+        ImGui::Begin("Rock layer", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+        ImGui::Text("Progress: %lu / %lu", getCurrentLayer()->getProgress(),
+            getCurrentLayer()->getHardness());
+        ImGui::End();
+    }
 }
 
 void MineShaftArea::handleMouseClicks()
@@ -77,10 +93,7 @@ void MineShaftArea::handleMouseClicks()
     auto const mouseJustPressed
         = getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft);
     auto const spaceBarJustPressed = getGame()->input().keyboard()->justPressed(jt::KeyCode::Space);
-    auto const isMouseInMineArea = (jt::MathHelper::checkIsIn(
-        { GP::HudMineShaftOffset().x, GP::HudMineShaftActiveLayerOffset().y,
-            GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
-        getGame()->input().mouse()->getMousePositionScreen()));
+    auto const isMouseInMineArea = checkIfMouseIsOverArea();
 
     if (spaceBarJustPressed || (mouseJustPressed && isMouseInMineArea)) {
         m_onClickCallback(m_clickReturn);
@@ -88,19 +101,27 @@ void MineShaftArea::handleMouseClicks()
     }
 }
 
+bool MineShaftArea::checkIfMouseIsOverArea() const
+{
+    return jt::MathHelper::checkIsIn(
+        { GP::HudMineShaftOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+            GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
+        getGame()->input().mouse()->getMousePositionScreen());
+}
+
 void MineShaftArea::progressMining(std::uint64_t value)
 {
-    auto active_layer = getActiveLayer();
+    auto active_layer = getCurrentLayer();
     active_layer->progressAmount(value);
     if (active_layer->isMined()) {
         m_mine_shaft_model.addMinedLayer();
-        flashActiveLayer();
+        flashCurrentLayer();
         cycleLayers();
         descend();
     }
 }
 
-std::shared_ptr<RockLayer> MineShaftArea::getActiveLayer()
+std::shared_ptr<RockLayer> MineShaftArea::getCurrentLayer() const
 {
     return m_rock_layers[(m_rock_layers.getTail() + 8) % 17];
 };
@@ -163,7 +184,7 @@ void MineShaftArea::updateHudObservers() const
     }
 }
 
-void MineShaftArea::flashActiveLayer() { getActiveLayer()->flash(); }
+void MineShaftArea::flashCurrentLayer() { getCurrentLayer()->flash(); }
 
 void MineShaftArea::setDescendHudObservers(
     std::shared_ptr<ObserverInterface<api::API const&>> moneyPerClickObserver,

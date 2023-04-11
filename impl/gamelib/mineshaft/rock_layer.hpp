@@ -24,6 +24,9 @@ public:
 
     jt::Rectf getArea() const;
 
+    std::uint64_t getHardness() const;
+    std::uint64_t getProgress() const;
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;

@@ -50,6 +50,7 @@ public:
     static uint64_t MineShaftLevelForHardnessIncrease();
     static uint64_t MineShaftDepthPerLayer();
     static float PurchasedSpeedIncreasePerLine();
+    static float HudTooltipWidth();
 };
 
 #endif

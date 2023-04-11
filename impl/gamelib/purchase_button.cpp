@@ -163,7 +163,7 @@ void PurchaseButton::doDraw() const
         if (jt::MathHelper::checkIsIn(m_mouseOverRect, mousePos)) {
             ImGui::SetNextWindowPos(
                 ImVec2 { mousePos.x * GP::GetZoom() + 10, mousePos.y * GP::GetZoom() });
-            ImGui::SetNextWindowSize(ImVec2 { 190, 116 });
+            ImGui::SetNextWindowSize(ImVec2 { GP::HudTooltipWidth(), 116 });
             std::string windowName = "Purchase " + m_purchaseInfo.name;
             ImGui::Begin(
                 windowName.c_str(), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);

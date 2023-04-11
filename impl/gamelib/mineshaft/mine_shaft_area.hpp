@@ -21,8 +21,8 @@ public:
     MineShaftArea(MineShaftModel& model, std::function<void(api::API const&)> callback,
         std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
 
-    std::shared_ptr<RockLayer> getActiveLayer();
-
+    std::shared_ptr<RockLayer> getCurrentLayer() const;
+    bool checkIfMouseIsOverArea() const;
     void setDescendHudObservers(
         std::shared_ptr<ObserverInterface<api::API const&>> moneyPerClickObserver,
         std::shared_ptr<ObserverInterface<api::API const&>> depthObserver);
@@ -48,10 +48,12 @@ private:
 
     void handleMouseClicks();
     void cycleLayers();
-    void flashActiveLayer();
+    void flashCurrentLayer();
     void updateHudObservers() const;
 
     void descend();
+
+    void drawTooltip() const;
 };
 
 #endif // CLICKERJAMSPRING2023_MINE_SHAFT_AREA_HPP

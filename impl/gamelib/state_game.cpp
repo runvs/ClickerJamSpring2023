@@ -43,11 +43,11 @@ void StateGame::onCreate()
             m_bank->receiveMoney(value);
             getGame()->gfx().camera().shake(0.1f, 2.0f);
             m_sparks->fire(
-                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getCurrentLayer()->getArea()));
             m_sparks->fire(
-                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getCurrentLayer()->getArea()));
             m_sparks->fire(
-                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getActiveLayer()->getArea()));
+                10, jt::Random::getRandomPointIn(m_mine_shaft_area->getCurrentLayer()->getArea()));
 
             m_digSound->play();
         },
@@ -212,7 +212,6 @@ void StateGame::onCreate()
         [this](std::uint64_t value) { m_mine_shaft_area->progressMining(value); });
     add(m_purchasedObjects);
 
-
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
 
@@ -297,10 +296,7 @@ void StateGame::updateCheats()
 
 void StateGame::updateMousePointer()
 {
-    if ((jt::MathHelper::checkIsIn(
-            { GP::HudMineShaftOffset().x, GP::HudMineShaftActiveLayerOffset().y,
-                GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
-            getGame()->input().mouse()->getMousePositionScreen()))) {
+    if (m_mine_shaft_area->checkIfMouseIsOverArea()) {
         m_mousePointer->playAnimation("mine");
     } else {
         m_mousePointer->playAnimation("default");
