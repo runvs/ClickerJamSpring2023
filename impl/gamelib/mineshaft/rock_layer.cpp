@@ -32,7 +32,7 @@ void RockLayer::doCreate()
     jt::Vector2f const minedOverlaySize { GP::HudMineShaftLayerSize().x - widthModifier
             - x_offset_left - 8.0f,
         GP::HudMineShaftLayerSize().y };
-    m_shapeMinedOverlay->makeRect(minedOverlaySize, textureManager());
+    m_shapeMinedOverlay->makeRect(minedOverlaySize + jt::Vector2f { 0, 1.0f }, textureManager());
     m_shapeMinedOverlay->setPosition({ GP::HudMineShaftOffset().x + x_offset_left, y_offset });
     m_shapeMinedOverlay->setColor(jt::Color { 0u, 0u, 0u, 210u });
     m_shapeMinedOverlay->setOrigin(jt::Vector2f { minedOverlaySize.x / 2.0f, 0.0f });
