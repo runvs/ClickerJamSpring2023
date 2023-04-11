@@ -18,6 +18,10 @@ struct PurchaseInfo {
     api::API income { api::from_uint64(1u) };
     jt::KeyCode keyCode { jt::KeyCode::Num1 };
 
+    float progressMiningTimerMax{10.0f};
+    std::uint64_t progressMiningValue{1ULL};
+
+
     // arguments that can be filled automatically
     int index { 0 };
 };

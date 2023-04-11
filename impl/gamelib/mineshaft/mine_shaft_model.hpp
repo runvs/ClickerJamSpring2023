@@ -9,13 +9,13 @@ public:
 
     api::API getCurrentDepth() const;
     void setCurrentDepth(api::API const& depth);
-    int getNumberOfMinedLayers();
+    std::uint64_t getNumberOfMinedLayers();
     void addMinedLayer(int amount = 1);
     void descend();
 
 private:
-    api::API m_current_depth;
-    int m_number_of_layers_mined;
+    api::API m_currentDepth;
+    std::uint64_t m_numberOfLayersMined;
 };
 
 #endif // CLICKERJAMSPRING2023_MINE_SHAFT_MODEL_HPP

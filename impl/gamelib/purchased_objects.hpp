@@ -16,6 +16,8 @@ public:
         std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
     void addObject(std::string const& name);
 
+    void setProgressMiningCallback(std::function<void(std::uint64_t)> const& callback);
+
     api::API getInputPerSecond() const;
 
     // Note: Just for serialization/deserialization
@@ -31,6 +33,7 @@ private:
     BankInterface& m_bank;
     std::vector<PurchaseInfo> m_infos;
     std::function<void(std::shared_ptr<jt::TweenInterface>)> m_addTweenCallback;
+    std::function<void(std::uint64_t)> m_progressMiningCallback;
 
     std::map<std::string, std::shared_ptr<PurchasedObject>> m_purchasedObjects;
 

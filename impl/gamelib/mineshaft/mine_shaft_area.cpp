@@ -8,10 +8,11 @@
 
 MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback,
     std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
-    : m_callback { callback }
+    : m_onClickCallback { callback }
     , m_mine_shaft_model { model }
     , m_addTweenCallback { addTweenCallback }
 {
+    m_clickReturn = api::from_uint64(1);
 }
 void MineShaftArea::doCreate()
 {
@@ -21,18 +22,18 @@ void MineShaftArea::doCreate()
     m_background_shape->setColor(jt::colors::Black);
     m_background_shape->update(1.0f);
 
-    std::size_t active_layer_index = m_rock_layers.capacity() / 2;
+    std::size_t activeLayerIndex = m_rock_layers.capacity() / 2;
     for (auto i = 0u; i != m_rock_layers.capacity(); i++) {
         jt::Color color;
         auto isSky = false;
-        if (i < active_layer_index) {
+        if (i < activeLayerIndex) {
             std::uint8_t offset = 5u * i;
             std::uint8_t r = (10u + offset) % 255;
             std::uint8_t g = (10u + offset) % 255;
             std::uint8_t b = (100u + offset) % 255;
             color = jt::Color { r, g, b };
             isSky = true;
-        } else if (i > active_layer_index) {
+        } else if (i > activeLayerIndex) {
             color = jt::Random::getRandomColor();
         } else {
             color = jt::Color { 112u, 128u, 144u };
@@ -46,6 +47,8 @@ void MineShaftArea::doCreate()
 
     m_descentSound = getGame()->audio().addTemporarySound("assets/sfx/mined1.wav");
     m_descentSound->setVolume(0.5f);
+
+    updateHudObservers();
 }
 void MineShaftArea::doUpdate(const float elapsed)
 {
@@ -68,26 +71,32 @@ void MineShaftArea::doDraw() const
         layer->draw();
     }
 }
+
 void MineShaftArea::handleMouseClicks()
 {
     auto const mouseJustPressed
         = getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft);
     auto const spaceBarJustPressed = getGame()->input().keyboard()->justPressed(jt::KeyCode::Space);
     auto const isMouseInMineArea = (jt::MathHelper::checkIsIn(
-        { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+        { GP::HudMineShaftOffset().x, GP::HudMineShaftActiveLayerOffset().y,
             GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
         getGame()->input().mouse()->getMousePositionScreen()));
 
     if (spaceBarJustPressed || (mouseJustPressed && isMouseInMineArea)) {
-        m_callback(api::from_uint64(1u));
-        auto active_layer = getActiveLayer();
-        active_layer->progressAmount(1);
-        if (active_layer->isMined()) {
-            m_mine_shaft_model.addMinedLayer();
-            flashActiveLayer();
-            cycleLayers();
-            descend();
-        }
+        m_onClickCallback(m_clickReturn);
+        progressMining();
+    }
+}
+
+void MineShaftArea::progressMining(std::uint64_t value)
+{
+    auto active_layer = getActiveLayer();
+    active_layer->progressAmount(value);
+    if (active_layer->isMined()) {
+        m_mine_shaft_model.addMinedLayer();
+        flashActiveLayer();
+        cycleLayers();
+        descend();
     }
 }
 
@@ -105,12 +114,15 @@ void MineShaftArea::cycleLayers()
         layer->ascend();
     }
 
+    // TODO do not pick random color, but limit hsv. Or use a predefined palette.
     auto const r = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
     auto const g = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
     auto const b = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
-    auto min = static_cast<int>(m_mine_shaft_model.getNumberOfMinedLayers() / 2) + 1;
-    auto max = m_mine_shaft_model.getNumberOfMinedLayers() + 5;
-    auto hardness = jt::Random::getInt(min, max);
+
+    std::uint64_t const hardness
+        = m_mine_shaft_model.getNumberOfMinedLayers() / GP::MineShaftLevelForHardnessIncrease()
+        + jt::Random::getInt(4, 7);
+
     jt::Color const col { r, g, b };
     std::stringstream ss;
     ss << "Create rock layer with color " << col << " and hardness " << hardness;
@@ -125,7 +137,38 @@ void MineShaftArea::descend()
 {
     m_mine_shaft_model.descend();
     m_descentSound->play();
-    getGame()->gfx().camera().shake(0.6f, 7.0f);
+    getGame()->gfx().camera().shake(0.6f, 6.0f);
+
+    api::API const clickReturnOffset = api::from_uint64(1u);
+    api::API const levelsNeededForClickReturnIncrease
+        = api::from_uint64(GP::MineShaftDepthForClickReturnIncrease());
+    m_clickReturn = m_mine_shaft_model.getCurrentDepth() / levelsNeededForClickReturnIncrease
+        + clickReturnOffset;
+    updateHudObservers();
+}
+void MineShaftArea::updateHudObservers() const
+{
+    {
+        auto obs = m_moneyPerClickObserver.lock();
+        if (obs) {
+            obs->notify(m_clickReturn);
+        }
+    }
+
+    {
+        auto obs = m_depthObserver.lock();
+        if (obs) {
+            obs->notify(m_mine_shaft_model.getCurrentDepth());
+        }
+    }
 }
 
 void MineShaftArea::flashActiveLayer() { getActiveLayer()->flash(); }
+
+void MineShaftArea::setDescendHudObservers(
+    std::shared_ptr<ObserverInterface<api::API const&>> moneyPerClickObserver,
+    std::shared_ptr<ObserverInterface<api::API const&>> depthObserver)
+{
+    m_moneyPerClickObserver = moneyPerClickObserver;
+    m_depthObserver = depthObserver;
+}

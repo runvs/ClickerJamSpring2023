@@ -35,6 +35,7 @@ public:
     static jt::Vector2f HudMenuOffset();
     static jt::Vector2f HudMenuSize();
     static jt::Vector2f HudMenuMargin();
+
     static jt::Vector2f HudMineShaftOffset();
     static jt::Vector2f HudMineShaftActiveLayerOffset();
     static jt::Vector2f HudMineShaftLayerSize();
@@ -44,6 +45,11 @@ public:
     static float PurchaseButtonRevealAtPercentage();
     static float PurchaseButtonCostIncreasePercent();
     static int PurchasedMaxNumberOfLines();
+
+    static uint64_t MineShaftDepthForClickReturnIncrease();
+    static uint64_t MineShaftLevelForHardnessIncrease();
+    static uint64_t MineShaftDepthPerLayer();
+    static float PurchasedSpeedIncreasePerLine();
 };
 
 #endif

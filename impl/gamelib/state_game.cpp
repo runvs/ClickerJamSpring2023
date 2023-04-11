@@ -33,6 +33,8 @@ void StateGame::onCreate()
     m_background->setColor(GP::PaletteBackground());
     m_background->setIgnoreCamMovement(true);
     m_background->update(0.0f);
+    m_hud = std::make_shared<Hud>();
+    add(m_hud);
 
     m_mine_shaft_model = std::make_shared<MineShaftModel>();
     m_mine_shaft_area = std::make_shared<MineShaftArea>(
@@ -50,9 +52,10 @@ void StateGame::onCreate()
             m_digSound->play();
         },
         [this](auto tween) { add(tween); });
-    add(m_mine_shaft_area);
 
-    createPlayer();
+    m_mine_shaft_area->setDescendHudObservers(
+        m_hud->getMoneyPerClickObserver(), m_hud->getDepthObserver());
+    add(m_mine_shaft_area);
 
     // TODO: refactor to own class
     m_sparks = jt::ParticleSystem<jt::Shape, 100>::createPS(
@@ -117,6 +120,9 @@ void StateGame::onCreate()
         miner.income = api::from_uint64(1u);
         miner.keyCode = jt::KeyCode::Num1;
 
+        miner.progressMiningTimerMax = 10.0f;
+        miner.progressMiningValue = 1u;
+
         purchaseInfos.push_back(miner);
     }
     {
@@ -137,6 +143,9 @@ void StateGame::onCreate()
         geologist.timerMax = 1.0f;
         geologist.income = api::from_uint64(8u);
         geologist.keyCode = jt::KeyCode::Num2;
+
+        geologist.progressMiningTimerMax = 7.5f;
+        geologist.progressMiningValue = 2u;
 
         purchaseInfos.push_back(geologist);
     }
@@ -159,6 +168,9 @@ void StateGame::onCreate()
         driller.income = api::from_uint64(65u);
         driller.keyCode = jt::KeyCode::Num3;
 
+        driller.progressMiningTimerMax = 5.0f;
+        driller.progressMiningValue = 4u;
+
         purchaseInfos.push_back(driller);
     }
     {
@@ -179,6 +191,9 @@ void StateGame::onCreate()
         blastMaster.income = api::from_uint64(600u);
         blastMaster.keyCode = jt::KeyCode::Num4;
 
+        blastMaster.progressMiningTimerMax = 3.0f;
+        blastMaster.progressMiningValue = 8u;
+
         purchaseInfos.push_back(blastMaster);
     }
 
@@ -193,7 +208,10 @@ void StateGame::onCreate()
 
     m_purchasedObjects = std::make_shared<PurchasedObjects>(
         *m_bank.get(), purchaseInfos, [this](auto tw) { add(tw); });
+    m_purchasedObjects->setProgressMiningCallback(
+        [this](std::uint64_t value) { m_mine_shaft_area->progressMining(value); });
     add(m_purchasedObjects);
+
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
@@ -219,7 +237,7 @@ void StateGame::onCreate()
         m_btnLoad->addCallback([this]() { load(); });
         add(m_btnLoad);
 #if JT_ENABLE_WEB
-        // TODO
+        // nothing to be done
 #else
         std::ifstream infile { "savegame.dat" };
         if (!infile.good()) {
@@ -227,8 +245,7 @@ void StateGame::onCreate()
         }
 #endif
     }
-    m_hud = std::make_shared<Hud>();
-    add(m_hud);
+
     // StateGame will call drawObjects itself.
     setAutoDraw(false);
 
@@ -244,44 +261,44 @@ void StateGame::onCreate()
 
 void StateGame::onEnter() { }
 
-void StateGame::createPlayer() { }
-
 void StateGame::onUpdate(float const elapsed)
 {
-    if (m_running) {
-        // update game logic here
+    // note: depth and moneyPerClick are updated only on value changes
+    m_hud->getMoneyScore()->notify(m_bank->getCurrentMoney());
+    m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerSecond());
 
-        // TODO think about updating hud only when values actually change
-        m_hud->getDepthScore()->notify(m_mine_shaft_model->getCurrentDepth());
-        m_hud->getMoneyScore()->notify(m_bank->getCurrentMoney());
-        m_hud->getMoneyPerSecond()->notify(m_purchasedObjects->getInputPerSecond());
-
-        if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)
-            && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
-            endGame();
-        }
-
-        m_menuBackground->update(elapsed);
-
-#if JT_ENABLE_DEBUG
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::M)
-            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
-            m_bank->receiveMoney(api::from_uint64(50));
-        }
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::N)
-            && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
-            auto current = m_bank->getCurrentMoney();
-            current = current * api::from_uint64(100);
-            m_bank->receiveMoney(current);
-        }
-#endif
-    }
+    updateCheats();
+    updateMousePointer();
 
     m_background->update(elapsed);
+    m_menuBackground->update(elapsed);
     m_vignette->update(elapsed);
+}
 
+void StateGame::updateCheats()
+{
+#if JT_ENABLE_DEBUG
+    if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)
+        && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
+        endGame();
+    }
+    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::M)
+        && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+        m_bank->receiveMoney(api::from_uint64(50));
+    }
+    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::N)
+        && getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+        auto current = m_bank->getCurrentMoney();
+        current = current * api::from_uint64(100);
+        m_bank->receiveMoney(current);
+    }
+#endif
+}
+
+void StateGame::updateMousePointer()
+{
     if ((jt::MathHelper::checkIsIn(
-            { GP::HudMineShaftActiveLayerOffset().x, GP::HudMineShaftActiveLayerOffset().y,
+            { GP::HudMineShaftOffset().x, GP::HudMineShaftActiveLayerOffset().y,
                 GP::HudMineShaftLayerSize().x, GP::HudMineShaftLayerSize().y + 1.0f },
             getGame()->input().mouse()->getMousePositionScreen()))) {
         m_mousePointer->playAnimation("mine");
@@ -304,17 +321,7 @@ void StateGame::onDraw() const
     m_mousePointer->draw();
 }
 
-void StateGame::endGame()
-{
-    if (m_hasEnded) {
-        // trigger this function only once
-        return;
-    }
-    m_hasEnded = true;
-    m_running = false;
-
-    getGame()->stateManager().switchToStoredState("menu");
-}
+void StateGame::endGame() { getGame()->stateManager().switchToStoredState("menu"); }
 
 std::string StateGame::getName() const { return "State Game"; }
 

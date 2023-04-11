@@ -163,12 +163,16 @@ void PurchaseButton::doDraw() const
         if (jt::MathHelper::checkIsIn(m_mouseOverRect, mousePos)) {
             ImGui::SetNextWindowPos(
                 ImVec2 { mousePos.x * GP::GetZoom() + 10, mousePos.y * GP::GetZoom() });
-            ImGui::SetNextWindowSize(ImVec2 { 150, 82 });
+            ImGui::SetNextWindowSize(ImVec2 { 190, 116 });
             std::string windowName = "Purchase " + m_purchaseInfo.name;
             ImGui::Begin(
                 windowName.c_str(), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
             ImGui::Text("Cost: %s$", m_cost.to_exp_string().c_str());
             ImGui::Text("Income: %s$/s", m_purchaseInfo.income.to_exp_string().c_str());
+            ImGui::Text("Mine Timer: %.1fs", m_purchaseInfo.progressMiningTimerMax);
+            ImGui::Text(
+                "Mine Strength: %s", std::to_string(m_purchaseInfo.progressMiningValue).c_str());
+
             std::string keyCodeText = m_purchaseInfo.keyCode._to_string();
             strutil::replace_all(keyCodeText, "Num", "");
             ImGui::Text("Hotkey: '%s'", keyCodeText.c_str());

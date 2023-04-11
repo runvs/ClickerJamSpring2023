@@ -1,24 +1,27 @@
 
 #include "mine_shaft_model.hpp"
+#include <game_properties.hpp>
 #include <iostream>
 
 MineShaftModel::MineShaftModel()
 {
-    m_current_depth = api::from_uint64(0u);
-    m_number_of_layers_mined = 0;
+    m_currentDepth = api::from_uint64(0u);
+    m_numberOfLayersMined = 0;
 }
 
-api::API MineShaftModel::getCurrentDepth() const { return m_current_depth; }
+api::API MineShaftModel::getCurrentDepth() const { return m_currentDepth; }
 
 void MineShaftModel::descend()
 {
-    m_current_depth = m_current_depth + api::from_uint64(17u) * api::from_uint64(1u);
+    m_currentDepth = m_currentDepth + api::from_uint64(GP::MineShaftDepthPerLayer());
     // TODO: if player reaches MAX_INT win game? Alternatively just wrap around to 0 or something...
-    m_number_of_layers_mined++;
+    if (m_numberOfLayersMined != std::numeric_limits<std::uint64_t>::max()) {
+        m_numberOfLayersMined++;
+    }
 }
 
-int MineShaftModel::getNumberOfMinedLayers() { return m_number_of_layers_mined; }
+std::uint64_t MineShaftModel::getNumberOfMinedLayers() { return m_numberOfLayersMined; }
 
-void MineShaftModel::addMinedLayer(int amount) { m_number_of_layers_mined += amount; }
+void MineShaftModel::addMinedLayer(int amount) { m_numberOfLayersMined += amount; }
 
-void MineShaftModel::setCurrentDepth(const api::API& depth) { m_current_depth = depth; }
+void MineShaftModel::setCurrentDepth(const api::API& depth) { m_currentDepth = depth; }

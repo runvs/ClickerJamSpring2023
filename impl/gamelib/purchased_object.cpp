@@ -49,7 +49,25 @@ void PurchasedObject::doUpdate(float const elapsed)
             m_bank.receiveMoney(m_info.income);
         }
     }
+
+    updateAutomaticMining(elapsed);
     m_text->update(elapsed);
+}
+void PurchasedObject::updateAutomaticMining(float const elapsed)
+{
+    if (m_numberOfObjects != 0) {
+        float const updateTime = elapsed
+            * (1.0f
+                + GP::PurchasedSpeedIncreasePerLine() * m_numberOfObjects
+                    / GP::PurchasedNumberOfObjectsPerLine());
+        m_progressMiningTimer += updateTime;
+        if (m_progressMiningTimer >= m_info.progressMiningTimerMax) {
+            m_progressMiningTimer -= m_info.progressMiningTimerMax;
+            if (m_progressMiningCallback) {
+                m_progressMiningCallback(m_info.progressMiningValue * m_numberOfObjects);
+            }
+        }
+    }
 }
 
 void PurchasedObject::doDraw() const
@@ -69,11 +87,20 @@ void PurchasedObject::drawTooltip() const
     if (jt::MathHelper::checkIsIn(m_rect, mousePos)) {
         ImGui::SetNextWindowPos(
             ImVec2 { mousePos.x * GP::GetZoom() + 10, mousePos.y * GP::GetZoom() });
-        ImGui::SetNextWindowSize(ImVec2 { 150, 65 });
+        ImGui::SetNextWindowSize(ImVec2 { 240, 116 });
         ImGui::Begin(
             m_info.name.c_str(), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
         ImGui::Text("Amount: %i", m_numberOfObjects);
         ImGui::Text("Income: %s$/s", m_incomePerSecond.to_exp_string().c_str());
+        ImGui::Text(
+            "Mine Timer: %.1f / %.1f", m_progressMiningTimer, m_info.progressMiningTimerMax);
+        ImGui::Text("Time Factor: %.1f (+%.1f/full line)",
+            (1.0f
+                + GP::PurchasedSpeedIncreasePerLine() * m_numberOfObjects
+                    / GP::PurchasedNumberOfObjectsPerLine()),
+            GP::PurchasedSpeedIncreasePerLine());
+        ImGui::Text("Mine Strength: %s",
+            std::to_string(m_info.progressMiningValue * m_numberOfObjects).c_str());
         ImGui::End();
     }
 }
@@ -152,4 +179,8 @@ void PurchasedObject::clean()
 {
     m_numberOfObjects = 0;
     m_timers.clear();
+}
+void PurchasedObject::setProgressMiningCallback(std::function<void(std::uint64_t)> const& callback)
+{
+    m_progressMiningCallback = callback;
 }

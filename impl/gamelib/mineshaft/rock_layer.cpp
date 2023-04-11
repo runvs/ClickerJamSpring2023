@@ -8,11 +8,11 @@
 #include <shape.hpp>
 #include <tweens/tween_scale.hpp>
 
-RockLayer::RockLayer(int hardness, jt::Color const& color, float initialLayerOffset,
+RockLayer::RockLayer(std::uint64_t hardness, jt::Color const& color, float initialLayerOffset,
     std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback, bool isSky)
     : m_hardness { hardness }
     , m_color { color }
-    , m_progress { 0 }
+    , m_progress { 0ULL }
     , m_layer_offset { initialLayerOffset }
     , m_isSky { isSky }
     , m_addTweenCallback { addTweenCallback }
@@ -72,7 +72,7 @@ void RockLayer::doDraw() const
     }
 }
 
-void RockLayer::progressAmount(int progress)
+void RockLayer::progressAmount(std::uint64_t progress)
 {
     if (isMined()) {
         return;
@@ -90,7 +90,7 @@ void RockLayer::progressAmount(int progress)
         + std::to_string(m_hardness));
 }
 
-bool RockLayer::isMined() const { return m_progress > m_hardness; }
+bool RockLayer::isMined() const { return m_progress >= m_hardness; }
 
 void RockLayer::ascend()
 {

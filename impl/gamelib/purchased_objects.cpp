@@ -14,6 +14,7 @@ void PurchasedObjects::doCreate()
     for (auto const& i : m_infos) {
         m_purchasedObjects[i.name]
             = std::make_shared<PurchasedObject>(m_bank, i, m_addTweenCallback);
+        m_purchasedObjects[i.name]->setProgressMiningCallback(m_progressMiningCallback);
         m_purchasedObjects[i.name]->setGameInstance(getGame());
         m_purchasedObjects[i.name]->create();
     }
@@ -55,4 +56,8 @@ void PurchasedObjects::clean()
     for (auto& po : m_purchasedObjects) {
         po.second->clean();
     }
+}
+void PurchasedObjects::setProgressMiningCallback(std::function<void(std::uint64_t)> const& callback)
+{
+    m_progressMiningCallback = callback;
 }

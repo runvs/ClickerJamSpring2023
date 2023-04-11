@@ -57,8 +57,6 @@ private:
 
     std::shared_ptr<jt::Button> m_btnSave;
     std::shared_ptr<jt::Button> m_btnLoad;
-    bool m_running { true };
-    bool m_hasEnded { false };
 
     api::API m_money;
     std::shared_ptr<jt::SoundInterface> m_digSound;
@@ -69,7 +67,8 @@ private:
     void onDraw() const override;
 
     void endGame();
-    void createPlayer();
+    void updateMousePointer();
+    void updateCheats();
 };
 
 #endif

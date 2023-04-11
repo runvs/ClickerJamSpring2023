@@ -13,7 +13,7 @@ class PurchasedObject : public jt::GameObject {
 public:
     PurchasedObject(BankInterface& bank, PurchaseInfo const& info,
         std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback);
-
+    void setProgressMiningCallback(std::function<void(std::uint64_t)> const& callback);
     void buyOne();
 
     api::API getInputPerSecond() const;
@@ -30,6 +30,9 @@ private:
     PurchaseInfo m_info;
     std::function<void(std::shared_ptr<jt::TweenInterface>)> m_addTweenCallback;
 
+    float m_progressMiningTimer { 0.0f };
+    std::function<void(std::uint64_t)> m_progressMiningCallback;
+
     int m_numberOfObjects { 0 };
     std::vector<float> m_timers {};
 
@@ -43,6 +46,7 @@ private:
     jt::Rectf m_rect;
     api::API m_incomePerSecond;
     void addNewAnimation();
+    void updateAutomaticMining(float const elapsed);
 };
 
 #endif // CLICKERJAMSPRING2023_PURCHASED_OBJECT_HPP

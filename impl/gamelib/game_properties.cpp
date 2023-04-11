@@ -39,16 +39,19 @@ jt::Vector2f GP::HudMenuSize()
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 1.0f,
         GP::GetScreenSize().y };
 }
+
 jt::Vector2f GP::HudMineShaftOffset()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) + 6.0f,
         0.0f };
 };
+
 jt::Vector2f GP::HudMineShaftActiveLayerOffset()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)),
         static_cast<float>(static_cast<int>(GetScreenSize().y / 17.0f * 8.0f)) };
 };
+
 jt::Vector2f GP::HudMineShaftLayerSize()
 {
     return jt::Vector2f { static_cast<float>(static_cast<int>(GetScreenSize().x / 3.0f)) - 5.0f,
@@ -59,3 +62,8 @@ int GP::PurchasedNumberOfObjectsPerLine() { return 12; }
 float GP::PurchaseButtonRevealAtPercentage() { return 0.85f; }
 float GP::PurchaseButtonCostIncreasePercent() { return 1.2f; }
 int GP::PurchasedMaxNumberOfLines() { return 4; }
+
+uint64_t GP::MineShaftDepthForClickReturnIncrease() { return 150; }
+uint64_t GP::MineShaftLevelForHardnessIncrease() { return 4u; }
+uint64_t GP::MineShaftDepthPerLayer() { return 15u; }
+float GP::PurchasedSpeedIncreasePerLine() { return 0.1f; }

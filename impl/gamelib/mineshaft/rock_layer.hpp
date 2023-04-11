@@ -12,11 +12,11 @@
 
 class RockLayer : public jt::GameObject {
 public:
-    RockLayer(int hardness, jt::Color const& color, float initialLayerOffset,
+    RockLayer(std::uint64_t hardness, jt::Color const& color, float initialLayerOffset,
         std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback,
         bool isSky = false);
 
-    void progressAmount(int progress);
+    void progressAmount(std::uint64_t progress);
 
     bool isMined() const;
     void ascend();
@@ -29,9 +29,9 @@ private:
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
-    int m_hardness;
+    std::uint64_t m_hardness;
     jt::Color m_color;
-    int m_progress;
+    std::uint64_t m_progress;
     float m_layer_offset;
 
     bool m_isSky;

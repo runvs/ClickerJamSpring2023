@@ -11,4 +11,5 @@ MoneyDisplay::MoneyDisplay(
 void MoneyDisplay::notify(api::API const& value)
 {
     m_scoreText->setText(m_textPrefix + value.to_exp_string() + m_textPostfix);
+    m_scoreText->update(0.0f);
 }
