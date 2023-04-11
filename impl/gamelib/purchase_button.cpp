@@ -87,29 +87,31 @@ void PurchaseButton::doUpdate(float const elapsed)
             m_hasBeenShown = true;
 
             float const tweenTime = 0.35f;
-            auto tw1 = jt::TweenPosition::create(m_button->getBackground(), tweenTime,
-                m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
-                m_button->getPosition());
-            tw1->setAgePercentConversion(
+            auto tweenButtonBackgroundPosition
+                = jt::TweenPosition::create(m_button->getBackground(), tweenTime,
+                    m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
+                    m_button->getPosition());
+            tweenButtonBackgroundPosition->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
-            m_addTweenCallback(tw1);
+            m_addTweenCallback(tweenButtonBackgroundPosition);
 
-            auto tw2 = jt::TweenPosition::create(m_button->getDrawable(), tweenTime,
+            auto tweenAnimationPosition = jt::TweenPosition::create(m_button->getDrawable(),
+                tweenTime,
                 m_button->getDrawable()->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
                 m_button->getDrawable()->getPosition());
-            tw2->setAgePercentConversion(
+            tweenAnimationPosition->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
-            m_addTweenCallback(tw2);
+            m_addTweenCallback(tweenAnimationPosition);
 
-            auto tw3 = jt::TweenPosition::create(m_buttonAnimation, tweenTime,
+            auto tweenTextPosition = jt::TweenPosition::create(m_buttonAnimation, tweenTime,
                 m_buttonAnimation->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f },
                 m_buttonAnimation->getPosition());
-            tw3->addCompleteCallback([button = this->m_button]() {
+            tweenTextPosition->addCompleteCallback([button = this->m_button]() {
                 button->getBackground()->flash(0.35f, jt::colors::Green);
             });
-            tw3->setAgePercentConversion(
+            tweenTextPosition->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
-            m_addTweenCallback(tw3);
+            m_addTweenCallback(tweenTextPosition);
 
             m_button->setPosition(
                 m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f });
