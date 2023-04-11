@@ -125,7 +125,7 @@ void StateGame::onCreate()
         miner.income = api::from_uint64(1u);
         miner.keyCode = jt::KeyCode::Num1;
 
-        miner.progressMiningTimerMax = 10.0f;
+        miner.progressMiningTimerMax = 8.0f;
         miner.progressMiningValue = 1u;
 
         purchaseInfos.push_back(miner);
@@ -149,7 +149,7 @@ void StateGame::onCreate()
         geologist.income = api::from_uint64(8u);
         geologist.keyCode = jt::KeyCode::Num2;
 
-        geologist.progressMiningTimerMax = 7.5f;
+        geologist.progressMiningTimerMax = 6f;
         geologist.progressMiningValue = 2u;
 
         purchaseInfos.push_back(geologist);
@@ -173,7 +173,7 @@ void StateGame::onCreate()
         driller.income = api::from_uint64(65u);
         driller.keyCode = jt::KeyCode::Num3;
 
-        driller.progressMiningTimerMax = 5.0f;
+        driller.progressMiningTimerMax = 4.0f;
         driller.progressMiningValue = 4u;
 
         purchaseInfos.push_back(driller);
@@ -185,7 +185,7 @@ void StateGame::onCreate()
         blastMaster.animationNameMenu = "idle";
         blastMaster.animationNamePurchased = "mine";
 
-        blastMaster.initialCost = api::from_uint64(45000u);
+        blastMaster.initialCost = api::from_uint64(35000u);
         blastMaster.purchaseCallback = [this](api::API const& /*cost*/) {
             m_purchasedObjects->addObject("Blaster");
             // Note: No need to remove money from bank, button already takes care of this
@@ -257,7 +257,7 @@ void StateGame::onCreate()
     for (auto i = 0; i != 6; ++i) {
         std::string const fileName = "assets/sfx/dig" + std::to_string(i) + ".wav";
         auto snd = getGame()->audio().addTemporarySound(fileName);
-        snd->setVolume(0.6f);
+        snd->setVolume(0.4f);
         soundGroupSounds.push_back(snd);
     }
     m_digSound = getGame()->audio().addTemporarySoundGroup(soundGroupSounds);
