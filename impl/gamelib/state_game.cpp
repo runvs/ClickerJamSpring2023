@@ -33,6 +33,11 @@ void StateGame::onCreate()
     m_background->setColor(GP::PaletteBackground());
     m_background->setIgnoreCamMovement(true);
     m_background->update(0.0f);
+
+    m_separator = std::make_shared<jt::Shape>();
+    m_separator->makeRect({ 2.0f, GP::GetScreenSize().y }, textureManager());
+    m_separator->setColor(jt::colors::Black);
+
     m_hud = std::make_shared<Hud>();
     add(m_hud);
 
@@ -313,8 +318,21 @@ void StateGame::onDraw() const
     m_vignette->draw();
     m_btnSave->draw();
     m_btnLoad->draw();
+
+    drawSeparators();
+
     m_hud->draw();
     m_mousePointer->draw();
+}
+void StateGame::drawSeparators() const
+{
+    m_separator->setPosition({ GP::HudMineShaftOffset().x, 0.0f });
+    m_separator->update(0.0f);
+    m_separator->draw(renderTarget());
+
+    m_separator->setPosition({ GP::HudMenuOffset().x - 2, 0.0f });
+    m_separator->update(0.0f);
+    m_separator->draw(renderTarget());
 }
 
 void StateGame::endGame() { getGame()->stateManager().switchToStoredState("menu"); }

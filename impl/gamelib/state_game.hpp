@@ -47,6 +47,7 @@ private:
     std::shared_ptr<CustomMouseCursor> m_mousePointer;
 
     std::shared_ptr<jt::Shape> m_menuBackground;
+    std::shared_ptr<jt::Shape> m_separator;
 
     std::shared_ptr<jt::ObjectGroup<PurchaseButton>> m_purchaseButtons;
     std::shared_ptr<Bank> m_bank;
@@ -69,6 +70,7 @@ private:
     void endGame();
     void updateMousePointer();
     void updateCheats();
+    void drawSeparators() const;
 };
 
 #endif

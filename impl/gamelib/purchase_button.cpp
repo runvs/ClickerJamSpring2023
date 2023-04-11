@@ -61,9 +61,12 @@ void PurchaseButton::purchaseAction()
     getGame()->logger().info("Button '" + m_purchaseInfo.name + "' pressed", { "PurchaseButton" });
     m_bank.spendMoney(m_cost);
     m_purchaseInfo.purchaseCallback(m_cost);
-    m_cost = m_cost * api::from_uint64(1000 * GP::PurchaseButtonCostIncreasePercent())
+    m_cost = m_cost
+            * api::from_uint64(
+                static_cast<std::uint64_t>(1000.0f * GP::PurchaseButtonCostIncreasePercent()))
             / api::from_uint64(1000)
         + api::from_uint64(1u);
+
     updateText();
     m_button->getBackground()->flash(0.2f, jt::Color { 255, 255, 255, 150 });
     m_soundGroup->play();

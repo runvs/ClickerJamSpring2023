@@ -1,10 +1,18 @@
 #include "mine_shaft_area.hpp"
 #include "input/mouse/mouse_defines.hpp"
+#include <color/color_factory.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <random/random.hpp>
 #include <imgui.h>
+
+namespace {
+jt::Color getRandomLayerColor()
+{
+    return jt::ColorFactory::fromHSV(jt::Random::getFloat(0, 360), 20, 60);
+}
+} // namespace
 
 MineShaftArea::MineShaftArea(MineShaftModel& model, std::function<void(const api::API&)> callback,
     std::function<void(std::shared_ptr<jt::TweenInterface>)> const& addTweenCallback)
@@ -27,16 +35,15 @@ void MineShaftArea::doCreate()
         jt::Color color;
         auto isSky = false;
         if (i < activeLayerIndex) {
+            // sky
             std::uint8_t offset = 5u * i;
             std::uint8_t r = (10u + offset) % 255;
             std::uint8_t g = (10u + offset) % 255;
             std::uint8_t b = (100u + offset) % 255;
             color = jt::Color { r, g, b };
             isSky = true;
-        } else if (i > activeLayerIndex) {
-            color = jt::Random::getRandomColor();
-        } else {
-            color = jt::Color { 112u, 128u, 144u };
+        } else if (i >= activeLayerIndex) {
+            color = getRandomLayerColor();
         }
         auto layer = std::make_shared<RockLayer>(jt::Random::getInt(1, static_cast<int>(i) + 2),
             color, static_cast<float>(i), m_addTweenCallback, isSky);
@@ -135,16 +142,12 @@ void MineShaftArea::cycleLayers()
         layer->ascend();
     }
 
-    // TODO do not pick random color, but limit hsv. Or use a predefined palette.
-    auto const r = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
-    auto const g = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
-    auto const b = static_cast<std::uint8_t>(jt::Random::getInt(10, 255));
+    auto const col = getRandomLayerColor();
 
     std::uint64_t const hardness
         = m_mine_shaft_model.getNumberOfMinedLayers() / GP::MineShaftLevelForHardnessIncrease()
         + jt::Random::getInt(4, 7);
 
-    jt::Color const col { r, g, b };
     std::stringstream ss;
     ss << "Create rock layer with color " << col << " and hardness " << hardness;
     getGame()->logger().info(ss.str());
