@@ -93,6 +93,7 @@ void PurchaseButton::doUpdate(float const elapsed)
                     m_button->getPosition());
             tweenButtonBackgroundPosition->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+            tweenButtonBackgroundPosition->setSkipFrames();
             m_addTweenCallback(tweenButtonBackgroundPosition);
 
             auto tweenAnimationPosition = jt::TweenPosition::create(m_button->getDrawable(),
@@ -101,6 +102,7 @@ void PurchaseButton::doUpdate(float const elapsed)
                 m_button->getDrawable()->getPosition());
             tweenAnimationPosition->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+            tweenAnimationPosition->setSkipFrames();
             m_addTweenCallback(tweenAnimationPosition);
 
             auto tweenTextPosition = jt::TweenPosition::create(m_buttonAnimation, tweenTime,
@@ -111,15 +113,8 @@ void PurchaseButton::doUpdate(float const elapsed)
             });
             tweenTextPosition->setAgePercentConversion(
                 [](float in) { return jt::ease::expo::easeOut(in, 0.0f, 1.0f, 1.0f); });
+            tweenTextPosition->setSkipFrames();
             m_addTweenCallback(tweenTextPosition);
-
-            m_button->setPosition(
-                m_button->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f });
-            m_button->update(0.0f);
-
-            m_buttonAnimation->setPosition(
-                m_buttonAnimation->getPosition() + jt::Vector2f { GP::HudMenuSize().x, 0.0f });
-            m_buttonAnimation->update(0.0f);
         }
     }
     m_button->update(elapsed);
