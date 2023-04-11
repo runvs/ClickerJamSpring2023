@@ -149,7 +149,7 @@ void StateGame::onCreate()
         geologist.income = api::from_uint64(8u);
         geologist.keyCode = jt::KeyCode::Num2;
 
-        geologist.progressMiningTimerMax = 6f;
+        geologist.progressMiningTimerMax = 6.0f;
         geologist.progressMiningValue = 2u;
 
         purchaseInfos.push_back(geologist);
