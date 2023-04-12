@@ -35,7 +35,7 @@ void gameloop()
 
 int main()
 {
-    //    hideConsoleInRelease();
+    hideConsoleInRelease();
 
     jt::Random::useTimeAsRandomSeed();
 

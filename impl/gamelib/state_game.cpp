@@ -1,5 +1,4 @@
 ﻿#include "state_game.hpp"
-#include <box2dwrapper/box2d_world_impl.hpp>
 #include <color/color.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
@@ -330,7 +329,7 @@ void StateGame::drawSeparators() const
     m_separator->update(0.0f);
     m_separator->draw(renderTarget());
 
-    m_separator->setPosition({ GP::HudMenuOffset().x - 2, 0.0f });
+    m_separator->setPosition({ GP::HudMenuOffset().x, 0.0f });
     m_separator->update(0.0f);
     m_separator->draw(renderTarget());
 }

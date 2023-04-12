@@ -5,7 +5,6 @@
 #include <animation.hpp>
 #include <bank.hpp>
 #include <bank_interface.hpp>
-#include <box2dwrapper/box2d_world_interface.hpp>
 #include <button.hpp>
 #include <custom_mouse_cursor.hpp>
 #include <game_state.hpp>
